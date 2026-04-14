@@ -52,7 +52,12 @@ export class AuthRepository implements IAuthRepository {
   }
 
   async signInWithProvider(provider: 'google' | 'github'): Promise<void> {
-    const { error } = await supabase.auth.signInWithOAuth({ provider });
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/`,
+      },
+    });
 
     if (error) {
       throw new AppError(
