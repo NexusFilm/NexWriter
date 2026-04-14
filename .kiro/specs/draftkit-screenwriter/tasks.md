@@ -1,0 +1,392 @@
+# Implementation Plan: DraftKit Screenwriter (Web)
+
+## Overview
+
+Incremental build of the DraftKit web screenwriting app using React 18+, TypeScript, TipTap/ProseMirror, Zustand, Supabase, Stripe, jsPDF, xmlbuilder2, and fast-check. Tasks follow the specified build order: schema/auth → scripts/dashboard → editor/formatter → autosave → payments → side panels/version history → export → learn hub → Story Blueprint.
+
+## Tasks
+
+- [x] 1. Project scaffolding, design system, and core types
+  - [x] 1.1 Initialize React + TypeScript project with Vite, install dependencies (TipTap, Zustand, Supabase client, React Router v6, jsPDF, xmlbuilder2, fast-check, Vitest)
+    - Configure Vitest with fast-check support
+    - Set up path aliases and environment variable placeholders (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_STRIPE_WRITER_PRICE_ID, VITE_STRIPE_PRO_PRICE_ID)
+    - _Requirements: 21.2_
+  - [x] 1.2 Create core TypeScript types and interfaces
+    - Define `ElementType`, `ScreenplayElement`, `Script`, `ScriptVersion`, `Tier`, `SaveStatus`, `GatedFeature`, `AppError`, `ErrorCode`
+    - Define all repository interfaces (`IScriptRepository`, `IAuthRepository`, `IBlueprintRepository`, `IBlogRepository`, `ISubscriptionRepository`)
+    - Define all service interfaces (`IAutosaveManager`, `IExportManager`, `ISuggestionEngine`, `ITierGateService`)
+    - Define Zustand store shapes (`AuthState`, `EditorState`, `BlueprintState`, `UIState`)
+    - _Requirements: 4.1, 21.1, 21.4_
+  - [x] 1.3 Implement design system tokens and global styles
+    - Create CSS custom properties for all color tokens (Editor bg #0D0D0D, Dashboard bg #111111, Surface #1A1A1A, Border #2A2A2A, Accent #E8A427, Text Primary #F0EDE6, Text Secondary #7A7A7A)
+    - Bundle Courier Prime font, set 12pt for screenplay text
+    - Set system sans-serif for non-screenplay UI, 10px corner radius
+    - Dark-mode-only theme
+    - _Requirements: 22.1, 22.2, 22.3, 22.4, 22.5_
+
+- [x] 2. Supabase schema, auth repository, and auth UI
+  - [x] 2.1 Create Supabase migration SQL for all sw_ tables
+    - Create tables: sw_user_profiles, sw_scripts, sw_script_versions, sw_blog_posts, sw_frameworks, sw_framework_beats, sw_beat_prompts, sw_beat_examples, sw_outline_sessions, sw_outline_answers, sw_scene_blueprints, sw_story_tags
+    - Define all RLS policies per the design document
+    - Create auth hook trigger for sw_user_profiles row creation on signup
+    - _Requirements: 21.1_
+  - [x] 2.2 Implement AuthRepository
+    - Implement `signUp`, `signIn`, `signInWithProvider` (Google, GitHub), `signOut`, `getSession`, `onAuthStateChange`
+    - Use Supabase Auth client, async/await, shared error handling wrapping errors in AppError
+    - _Requirements: 1.1, 1.2, 1.5, 21.3, 21.4_
+  - [x] 2.3 Implement AuthStore (Zustand)
+    - Implement `AuthState` with `user`, `tier`, `loading`, `signIn`, `signInWithProvider`, `signUp`, `signOut`, `refreshTier`
+    - Wire to AuthRepository and SubscriptionRepository for tier fetching
+    - _Requirements: 1.1, 1.2, 1.3, 1.5_
+  - [x] 2.4 Implement LoginPage and SignupPage components
+    - Build EmailPasswordForm and SocialLoginButtons (Google, GitHub)
+    - Display descriptive error messages on invalid credentials without revealing email existence
+    - On success, redirect to Dashboard
+    - _Requirements: 1.1, 1.2, 1.3, 1.4_
+  - [x] 2.5 Implement AuthGuard and protected routing
+    - Create AuthGuard wrapper that checks session, redirects to /login if expired/missing
+    - Set up React Router v6 route structure per design (/, /editor/:scriptId, /blueprint/*, /history/:scriptId, /learn/*, /settings)
+    - _Requirements: 1.6_
+
+- [x] 3. Checkpoint — Auth and schema
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 4. Script model, repository, and Dashboard
+  - [x] 4.1 Implement ScriptRepository
+    - Implement `getScripts`, `getScript`, `createScript`, `updateScript`, `duplicateScript`, `deleteScript`, `getVersions`, `createVersion`, `restoreVersion`
+    - All operations on sw_scripts and sw_script_versions tables
+    - Async/await, shared AppError error handling
+    - Environment variables for Supabase URL and anon key (not hardcoded)
+    - _Requirements: 21.1, 21.2, 21.3, 21.4_
+  - [x] 4.2 Implement TierGateService
+    - Implement `canCreateScript(userId)`: free tier < 3 scripts → true, free tier >= 3 → false, writer/pro → always true
+    - Implement `canAccessFeature(userId, feature)` for all GatedFeature values
+    - Implement `getScriptCount(userId)`
+    - _Requirements: 3.2, 3.3, 3.4, 14.1_
+  - [x]* 4.3 Write property test: Script Creation Tier Gating (Property 6)
+    - **Property 6: Script Creation Tier Gating**
+    - Generate random `{tier, scriptCount}` pairs, verify `canCreateScript` returns correct boolean per tier rules
+    - **Validates: Requirements 3.2, 3.3, 3.4**
+  - [x]* 4.4 Write property test: Duplicate Title Transformation (Property 16)
+    - **Property 16: Duplicate Title Transformation**
+    - Generate random title strings, verify duplicate produces title + " (Copy)"
+    - **Validates: Requirements 2.4**
+  - [x] 4.5 Implement UIStore (Zustand)
+    - Manage modal visibility (PaywallModal), toast queue, sidebar state
+    - _Requirements: 14.1_
+  - [x] 4.6 Implement DashboardPage with ScriptCardGrid
+    - Display all user scripts as cards (title, page count, last-saved timestamp)
+    - "New Script" button with tier gating (free tier: max 3 scripts, else PaywallModal)
+    - Script card context menu: Rename (inline edit + persist), Duplicate (title + " (Copy)"), Delete (confirm dialog)
+    - Click card → navigate to /editor/:scriptId
+    - No business logic in components — delegate to ScriptRepository and TierGateService
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 3.1, 3.2, 3.3, 3.4, 21.5_
+
+- [x] 5. Checkpoint — Dashboard and script CRUD
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 6. Screenplay editor and formatter (TipTap/ProseMirror)
+  - [x] 6.1 Create TipTap custom schema and ScreenplayBlock node
+    - Define ProseMirror schema: Document → ScreenplayBlock (attrs: elementType, elementId, order) → Text (marks: bold, italic, underline)
+    - Apply CSS classes per ElementType (.el-scene-heading, .el-action, .el-character, .el-dialogue, .el-parenthetical, .el-transition, .el-title-page)
+    - Implement formatting: SCENE_HEADING uppercase bold, CHARACTER uppercase centered, DIALOGUE indented, PARENTHETICAL indented with parens, TRANSITION uppercase right-aligned, ACTION left-aligned, TITLE_PAGE centered first page
+    - Courier Prime 12pt for all screenplay text
+    - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9_
+  - [x] 6.2 Implement editor serialization functions
+    - Implement `editorStateToElements(doc: ProseMirrorNode): ScreenplayElement[]`
+    - Implement `elementsToEditorState(elements: ScreenplayElement[]): ProseMirrorNode`
+    - These are pure functions for round-trip conversion between editor state and ScreenplayElement[]
+    - _Requirements: 4.10_
+  - [x]* 6.3 Write property test: Editor State Round-Trip (Property 1)
+    - **Property 1: Editor State Round-Trip**
+    - Generate random `ScreenplayElement[]`, convert to ProseMirror doc and back, verify equivalence
+    - Use the `screenplayElementsArb` generator from the design
+    - **Validates: Requirements 4.10**
+  - [x] 6.4 Implement keyboard plugin (TipTap extension)
+    - Tab: cycle elementType (SCENE_HEADING → ACTION → CHARACTER → DIALOGUE → PARENTHETICAL → TRANSITION → SCENE_HEADING)
+    - Enter after CHARACTER → new DIALOGUE
+    - Enter after DIALOGUE → new CHARACTER
+    - Enter after TRANSITION → new SCENE_HEADING
+    - Enter after ACTION → new ACTION
+    - Enter on empty block → convert to ACTION
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6_
+  - [x]* 6.5 Write property test: Tab Cycles Element Types (Property 5)
+    - **Property 5: Tab Cycles Element Types Completely**
+    - Generate random ElementType, verify cycle produces correct next type, verify 6 applications return to original
+    - **Validates: Requirements 5.1**
+  - [x] 6.6 Implement EditorStore (Zustand)
+    - Manage `script`, `elements`, `saveStatus`, `activePanelTab`, `showBlueprintAnnotations`
+    - Implement `setElements`, `updateElement`, `insertElement`, `deleteElement`, `cycleElementType`, `setSaveStatus`
+    - Call `editorStateToElements` on every change to keep ScreenplayElement[] in sync
+    - _Requirements: 4.1, 6.4_
+  - [x] 6.7 Implement EditorPage and EditorToolbar
+    - EditorToolbar: editable title field (persist via ScriptRepository), live page count, save status indicator ("Saved"/"Saving…"/"Unsaved changes"), side panel toggle button
+    - Wire ScreenplayEditor (TipTap instance) to EditorStore
+    - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+  - [x] 6.8 Implement page count computation
+    - Compute page count from ScreenplayElement[] using screenplay layout rules (Courier 12pt, US Letter, standard margins)
+    - _Requirements: 6.3_
+  - [x]* 6.9 Write property test: Page Count Monotonicity (Property 17)
+    - **Property 17: Page Count Monotonicity**
+    - Generate random ScreenplayElement[] of length N, verify page count >= 0, verify appending an element results in page count >= previous
+    - **Validates: Requirements 6.3**
+
+- [x] 7. Checkpoint — Editor core
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 8. Autosave manager
+  - [x] 8.1 Implement AutosaveManager service
+    - Layer 1: localStorage save with 1500ms debounce (key: `draftkit:draft:{scriptId}`, value: JSON `{elements, timestamp}`)
+    - Layer 2: Supabase upsert every 45s for paid tiers only (skip for free tier)
+    - Layer 3: Version snapshot insert to sw_script_versions every 10 minutes
+    - Implement `start`, `stop`, `onContentChange`, `getLocalDraft`, `resolveConflict`
+    - Error recovery: Layer 1 failure → log warning; Layer 2 failure → retry with exponential backoff (1s, 2s, 4s) then show "Offline"; Layer 3 failure → skip, retry next interval
+    - _Requirements: 7.1, 7.2, 7.3, 7.5_
+  - [x] 8.2 Implement conflict resolution
+    - On editor load: compare localStorage draft timestamp with cloud version timestamp, restore whichever is newer
+    - If timestamps equal, prefer cloud version
+    - _Requirements: 7.4_
+  - [x]* 8.3 Write property test: localStorage Round-Trip (Property 4)
+    - **Property 4: localStorage Round-Trip**
+    - Generate random ScreenplayElement[], JSON.stringify then JSON.parse, verify equivalence
+    - **Validates: Requirements 7.6**
+  - [x]* 8.4 Write property test: Conflict Resolution Picks Newer (Property 10)
+    - **Property 10: Conflict Resolution Picks Newer Version**
+    - Generate random (elements, timestamp) pairs for local and cloud, verify resolver picks the one with greater timestamp, cloud preferred on tie
+    - **Validates: Requirements 7.4**
+  - [x] 8.5 Wire AutosaveManager into EditorPage
+    - Start autosave on editor mount, stop on unmount
+    - Feed EditorStore changes to AutosaveManager.onContentChange
+    - Update EditorStore.saveStatus based on autosave state
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+
+- [x] 9. Checkpoint — Autosave
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 10. Stripe payment and paywall
+  - [x] 10.1 Implement Supabase Edge Function for Stripe webhook
+    - Handle `checkout.session.completed` and `customer.subscription.updated` events
+    - Update sw_user_profiles.tier and stripe_customer_id on successful payment
+    - _Requirements: 14.3_
+  - [x] 10.2 Implement SubscriptionRepository
+    - Implement `getUserTier`, `createCheckoutSession` (calls Edge Function to create Stripe Checkout Session, returns checkout URL), `getSubscriptionStatus`
+    - _Requirements: 14.2, 14.3_
+  - [x] 10.3 Implement PaywallModal component
+    - Display tier comparison: Free, Writer ($6.99/mo), Pro ($13.99/mo) with feature lists
+    - On tier selection → initiate Stripe checkout via SubscriptionRepository
+    - On success → refresh tier via AuthStore.refreshTier, unlock gated features
+    - On failure/cancel → display error message, keep user on free tier
+    - _Requirements: 14.1, 14.2, 14.3, 14.4_
+  - [x] 10.4 Wire PaywallModal into gated feature triggers
+    - Dashboard "New Script" (free tier >= 3 scripts)
+    - BeatSheetOverlay locked templates
+    - Export .fdx/.fountain (free tier)
+    - Version history (free tier accessing beyond 5 versions)
+    - _Requirements: 3.3, 10.3, 12.3, 11.4_
+
+- [x] 11. Scene panel, Character tracker, Beat sheet overlay, and Version history
+  - [x] 11.1 Implement SceneParser service and ScenePanel component
+    - Parse all SCENE_HEADING elements from ScreenplayElement[], display as ordered list with scene index numbers
+    - Click scene entry → scroll editor to that SCENE_HEADING
+    - Update scene list within 500ms of SCENE_HEADING add/remove/edit
+    - _Requirements: 8.1, 8.2, 8.3_
+  - [x]* 11.2 Write property test: Scene Parsing (Property 8)
+    - **Property 8: Scene Parsing Extracts Exactly Scene Headings**
+    - Generate random ScreenplayElement[], verify parser returns exactly SCENE_HEADING elements in original order with correct 1-based indexing
+    - **Validates: Requirements 8.1**
+  - [x] 11.3 Implement CharacterParser service and CharacterTracker component
+    - Parse all CHARACTER elements, deduplicate by name, display unique characters with appearance counts
+    - Click character entry → scroll to first occurrence
+    - Update within 500ms of CHARACTER add/remove/edit
+    - _Requirements: 9.1, 9.2, 9.3_
+  - [x]* 11.4 Write property test: Character Tracker Counts (Property 9)
+    - **Property 9: Character Tracker Counts Are Consistent**
+    - Generate random ScreenplayElement[] with CHARACTER elements, verify sum of counts equals total CHARACTER elements, no duplicate names in output
+    - **Validates: Requirements 9.1**
+  - [x] 11.5 Implement BeatSheetOverlay component
+    - Display beat sheet templates: 3-Act Structure, Save the Cat, Hero's Journey
+    - Free tier: show only 3-Act, lock icon on others → PaywallModal on click
+    - Paid tier: show all templates with ordered beat list and descriptions
+    - _Requirements: 10.1, 10.2, 10.3, 10.4_
+  - [x] 11.6 Implement SidePanel container with tab switching
+    - Toggle between ScenePanel, CharacterTracker, BeatSheetOverlay via EditorStore.activePanelTab
+    - Wire to EditorToolbar panel toggle button
+    - _Requirements: 6.5_
+  - [x] 11.7 Implement VersionHistoryPage
+    - Display version snapshots ordered by creation date descending
+    - Select version → read-only preview of content
+    - "Restore" button → replace current script content via ScriptRepository.restoreVersion
+    - Free tier: max 5 versions visible, PaywallModal for older versions
+    - Writer/Pro tier: all versions visible
+    - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
+  - [x]* 11.8 Write property test: Version Access Tier Gating (Property 7)
+    - **Property 7: Version Access Tier Gating**
+    - Generate random ScriptVersion[] lists and tier values, verify free tier sees max 5 most recent, paid tiers see all
+    - **Validates: Requirements 11.4, 11.5**
+
+- [x] 12. Checkpoint — Side panels and version history
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 13. Export manager (PDF, FDX, Fountain)
+  - [x] 13.1 Implement PDF export
+    - Use jsPDF with embedded Courier Prime 12pt (base64)
+    - US Letter (8.5" × 11"), margins: 1.5" left, 1" top/right/bottom
+    - Type-specific layout blocks, pagination with page numbers top-right
+    - Title page: TITLE_PAGE elements centered on page 1, screenplay starts page 2
+    - Available to all tiers
+    - _Requirements: 12.1, 12.2_
+  - [x] 13.2 Implement FDX export and parser
+    - Use xmlbuilder2 to build Final Draft XML
+    - Map each ScreenplayElement to `<Paragraph>` with `Type` attribute, wrap in `<FinalDraft>` → `<Content>`
+    - Implement `parseFDX` to reverse the process
+    - Gated to Writer/Pro tiers
+    - _Requirements: 12.4, 12.7_
+  - [x]* 13.3 Write property test: FDX Round-Trip (Property 3)
+    - **Property 3: FDX Export Round-Trip**
+    - Generate random ScreenplayElement[] with XML-safe text, export to FDX then parse back, verify equivalence
+    - **Validates: Requirements 12.7**
+  - [x] 13.4 Implement Fountain export and parser
+    - Custom serializer: SCENE_HEADING (prefix `.` or raw uppercase), CHARACTER (uppercase + newline), DIALOGUE (indented below character), PARENTHETICAL (wrapped in parens), TRANSITION (suffixed `TO:` or prefixed `>`), ACTION (plain text with blank line separation)
+    - Implement `parseFountain` to reverse the process
+    - Gated to Writer/Pro tiers
+    - _Requirements: 12.5, 12.6_
+  - [x]* 13.5 Write property test: Fountain Round-Trip (Property 2)
+    - **Property 2: Fountain Export Round-Trip**
+    - Generate random ScreenplayElement[] avoiding ambiguous Fountain edge cases, export then parse back, verify equivalence
+    - **Validates: Requirements 12.6**
+  - [x] 13.6 Implement ExportManager service and wire into EditorToolbar
+    - Expose `exportPDF`, `exportFDX`, `exportFountain` methods
+    - Tier-gate FDX and Fountain exports (free tier → PaywallModal)
+    - Trigger file download on successful export
+    - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5_
+
+- [x] 14. Checkpoint — Export
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 15. Learn hub, blog, and ads
+  - [x] 15.1 Implement BlogRepository
+    - Implement `getPosts(category?)`, `getPost(postId)`, `getCategories()`
+    - Fetch from sw_blog_posts (only published posts: published_at IS NOT NULL)
+    - _Requirements: 13.1_
+  - [x] 15.2 Implement LearnHubPage with CategoryFilter and BlogPostGrid
+    - Fetch and display blog posts with category filter controls
+    - Display post cards with title, author, category, read time
+    - _Requirements: 13.1, 13.2_
+  - [x]* 15.3 Write property test: Category Filter (Property 13)
+    - **Property 13: Category Filter Returns Only Matching Posts**
+    - Generate random BlogPost[] and category string, verify filtered result contains only and all matching posts
+    - **Validates: Requirements 13.2**
+  - [x] 15.4 Implement BlogPostDetailPage
+    - Display full content, author, published date, estimated read time
+    - _Requirements: 13.3_
+  - [x] 15.5 Implement ad slots for free tier, hide for paid tiers
+    - Free tier: display advertisements in designated ad slots on LearnHub
+    - Writer/Pro tier: hide all advertisements
+    - _Requirements: 13.4, 13.5_
+
+- [x] 16. Checkpoint — Learn hub
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 17. Story Blueprint — Framework selection and genre/tone config
+  - [x] 17.1 Implement BlueprintRepository
+    - Implement `getFrameworks`, `getFrameworkBeats`, `createOutlineSession`, `saveOutlineAnswer`, `getOutlineSession`, `getOutlineAnswers`
+    - All operations on sw_frameworks, sw_framework_beats, sw_outline_sessions, sw_outline_answers, sw_scene_blueprints, sw_story_tags
+    - _Requirements: 15.4, 21.1_
+  - [x] 17.2 Implement BlueprintStore (Zustand)
+    - Manage `framework`, `genre`, `format`, `tone`, `currentBeatIndex`, `answers`, `sessionId`
+    - Implement `setFramework`, `setGenreToneFormat`, `advanceBeat`, `setAnswer`
+    - _Requirements: 15.1, 16.1_
+  - [x] 17.3 Implement FrameworkSelector component
+    - Display frameworks: 5P Model (default, "Recommended" badge), Save the Cat (15 beats), Dan Harmon Story Circle (8 steps), Hero's Journey (12 stages), 3-Act Structure, 7-Point Story Structure
+    - On selection → display brief explanation and beat list before proceeding
+    - _Requirements: 15.1, 15.2, 15.3_
+  - [x] 17.4 Implement GenreToneConfig component
+    - Prompt for genre (Drama, Comedy, Thriller, Horror, Sci-Fi, Romance, Action), format (Feature, Short, Pilot), tone (Dark, Light, Satirical, Grounded)
+    - Store selections in sw_outline_sessions via BlueprintRepository
+    - _Requirements: 16.1, 16.2_
+
+- [x] 18. Story Blueprint — Guided outline wizard and suggestion engine
+  - [x] 18.1 Implement SuggestionEngine service
+    - Implement `getPrompts(frameworkId, beatId, genre, storyType)`: query sw_beat_prompts filtered by framework, beat, genre, story_type (NULL = universal)
+    - Implement `getExamples(frameworkId, beatId, genre)`: query sw_beat_examples filtered similarly
+    - Implement `getFallbackPrompts(frameworkId, beatId)`: re-query with only framework + beat when no genre-specific match
+    - No AI/LLM calls — purely database-driven
+    - _Requirements: 16.3, 17.3, 17.4, 20.1, 20.2, 20.3, 20.4_
+  - [x]* 18.2 Write property test: Suggestion Engine Matching (Property 11)
+    - **Property 11: Suggestion Engine Returns Matching Prompts**
+    - Generate random filter combinations against seeded prompt data, verify all returned prompts have matching framework_id and beat_id, and matching or NULL genre/story_type
+    - **Validates: Requirements 16.3, 17.3, 17.4, 20.2**
+  - [x]* 18.3 Write property test: Suggestion Engine Fallback (Property 12)
+    - **Property 12: Suggestion Engine Fallback Returns Universal Prompts**
+    - Generate framework/beat combos with no genre-specific data, verify returned prompts have NULL genre and NULL story_type
+    - **Validates: Requirements 20.3**
+  - [x] 18.4 Implement BeatStepWizard component
+    - Present each beat sequentially as a wizard step
+    - For each beat: display beat name, explanation, guidance prompts (from SuggestionEngine), optional page range targets, genre-sensitive hints, educational tooltips, example hints
+    - Save user's answer to sw_outline_answers on beat completion via BlueprintRepository
+    - _Requirements: 17.1, 17.2, 17.3, 17.4, 17.5_
+  - [x] 18.5 Implement 5P Model framework beats
+    - Person: prompt for protagonist name, flaw, wound, desire, stakes, voice, world
+    - Problem: prompt for central conflict, opposition, urgency
+    - Plan: prompt for character's strategy and early actions
+    - Pivot: prompt for midpoint turn, revelation, identity shift
+    - Payoff: prompt for climax, transformation, resolution
+    - _Requirements: 18.1, 18.2, 18.3, 18.4, 18.5, 18.6_
+  - [x] 18.6 Implement BlueprintSummary and scaffold generation
+    - On all beats completed: generate story summary, beat list, scene blueprints, and editor scaffold from collected answers
+    - Store scene blueprints in sw_scene_blueprints
+    - _Requirements: 17.6_
+
+- [x] 19. Story Blueprint — Editor integration
+  - [x] 19.1 Implement blueprint-to-editor scaffold generation
+    - Pre-populate editor with beat markers as SCENE_HEADING elements at appropriate positions
+    - Insert act break markers, scene placeholders, character goal reminders, theme reminders from blueprint answers
+    - _Requirements: 19.1, 19.2_
+  - [x]* 19.2 Write property test: Blueprint Scaffold Contains Beat Markers (Property 14)
+    - **Property 14: Blueprint Scaffold Contains Beat Markers**
+    - Generate random complete answer sets covering all beats, verify scaffold contains at least one SCENE_HEADING per answered beat
+    - **Validates: Requirements 17.6, 19.1**
+  - [x] 19.3 Implement blueprint annotation decorations
+    - Implement as ProseMirror decorations (not document nodes)
+    - Toggle annotations on/off via EditorStore.showBlueprintAnnotations — decoration filter, not document mutation
+    - Annotations do not appear in exports
+    - _Requirements: 19.3, 19.4_
+  - [x]* 19.4 Write property test: Annotation Toggle Preserves Elements (Property 15)
+    - **Property 15: Annotation Toggle Preserves Elements**
+    - Generate random ScreenplayElement[], toggle annotations off, verify elements array is identical to original
+    - **Validates: Requirements 19.4**
+  - [x] 19.5 Wire BlueprintWizardPage end-to-end
+    - Connect FrameworkSelector → GenreToneConfig → BeatStepWizard → BlueprintSummary → Editor with annotations
+    - Route: /blueprint/new and /blueprint/:sessionId
+    - _Requirements: 15.1, 15.2, 15.3, 16.1, 17.1, 17.5, 17.6, 19.1, 19.2, 19.3_
+
+- [x] 20. Checkpoint — Story Blueprint
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 21. Final integration and wiring
+  - [x] 21.1 Implement SettingsPage with SubscriptionPanel
+    - Display current tier, manage subscription link
+    - _Requirements: 14.1_
+  - [x] 21.2 End-to-end route wiring and navigation verification
+    - Verify all routes render correctly with AuthGuard protection
+    - Verify navigation flows: Login → Dashboard → Editor, Dashboard → Blueprint → Editor, Dashboard → LearnHub, Editor → VersionHistory
+    - _Requirements: 1.6, 2.6_
+  - [x]* 21.3 Write integration tests for critical flows
+    - ScriptRepository CRUD against mock Supabase
+    - AuthRepository sign-in/sign-up flows
+    - AutosaveManager Layer 2 cloud sync with mock repository
+    - BlueprintRepository session and answer persistence
+    - _Requirements: 21.3, 21.4_
+
+- [x] 22. Final checkpoint — Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+## Notes
+
+- Tasks marked with `*` are optional and can be skipped for faster MVP
+- Each task references specific requirements for traceability
+- Checkpoints ensure incremental validation throughout the build
+- Property tests validate the 17 universal correctness properties from the design document using fast-check with 100+ iterations each
+- Unit tests validate specific examples and edge cases
+- All business logic resides in service/repository classes — React components are purely presentational (Requirement 21.5)
+- The tech stack is React 18+ / TypeScript / TipTap / Zustand / Supabase / Stripe / jsPDF / xmlbuilder2 / Vitest / fast-check

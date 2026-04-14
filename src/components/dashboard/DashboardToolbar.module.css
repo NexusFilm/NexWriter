@@ -1,0 +1,61 @@
+/* DashboardToolbar — CSS Module */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  gap: 16px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+  margin-right: 16px;
+}
+
+.navLink {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-family: var(--font-ui);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.navLink:hover {
+  color: var(--color-text-primary);
+}
+
+.newScriptBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background-color: var(--color-accent);
+  color: var(--color-editor-bg);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.newScriptBtn:hover {
+  opacity: 0.9;
+}
+
+.newScriptBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,0 +1,150 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.progress {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.progressBar {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-accent);
+  transition: width 0.25s ease;
+}
+
+.beatHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.beatName {
+  font-family: var(--font-ui);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.beatDesc {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.pageRange {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-accent);
+  margin: 0;
+}
+
+.promptsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.promptsLabel {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.promptItem {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--color-text-primary);
+  padding: 6px 10px;
+  border-left: 2px solid var(--color-accent);
+  margin-left: 4px;
+  line-height: 1.4;
+}
+
+.exampleItem {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  padding: 6px 10px;
+  border-left: 2px solid var(--color-border);
+  margin-left: 4px;
+  line-height: 1.4;
+}
+
+.exampleSource {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.answerArea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.answerArea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.navRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.navBtn {
+  padding: 8px 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.12s ease;
+}
+
+.navBtn:hover {
+  border-color: var(--color-accent);
+}
+
+.navBtnPrimary {
+  composes: navBtn;
+  background: var(--color-accent);
+  color: var(--color-editor-bg);
+  border-color: var(--color-accent);
+  font-weight: 600;
+}
+
+.navBtnPrimary:hover {
+  opacity: 0.9;
+}

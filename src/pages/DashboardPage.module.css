@@ -1,0 +1,37 @@
+/* DashboardPage — CSS Module using design tokens */
+
+.page {
+  min-height: 100vh;
+  background-color: var(--color-dashboard-bg);
+  padding: 32px 40px;
+  font-family: var(--font-ui);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--color-text-secondary);
+  font-size: 16px;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: #e05252;
+  font-size: 14px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 40vh;
+  color: var(--color-text-secondary);
+  font-size: 16px;
+}

@@ -1,0 +1,20 @@
+/* Design System Tokens — DraftKit Screenwriter */
+
+:root {
+  /* Colors */
+  --color-editor-bg: #0D0D0D;
+  --color-dashboard-bg: #111111;
+  --color-surface: #1A1A1A;
+  --color-border: #2A2A2A;
+  --color-accent: #E8A427;
+  --color-text-primary: #F0EDE6;
+  --color-text-secondary: #7A7A7A;
+
+  /* Typography */
+  --font-screenplay: 'Courier Prime', 'Courier New', monospace;
+  --font-ui: system-ui, -apple-system, sans-serif;
+  --font-size-screenplay: 12pt;
+
+  /* Spacing / Radii */
+  --radius: 10px;
+}

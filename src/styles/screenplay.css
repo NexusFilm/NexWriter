@@ -1,0 +1,53 @@
+/* Screenplay Element Type CSS Classes — DraftKit Screenwriter */
+
+/* Base screenplay text: Courier Prime 12pt */
+.el-scene-heading,
+.el-action,
+.el-character,
+.el-dialogue,
+.el-parenthetical,
+.el-transition,
+.el-title-page {
+  font-family: var(--font-screenplay);
+  font-size: var(--font-size-screenplay);
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+/* SCENE_HEADING — Uppercase, bold, full-width */
+.el-scene-heading {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* ACTION — Standard left-aligned */
+.el-action {
+  text-align: left;
+}
+
+/* CHARACTER — Uppercase, centered (margin-left: 40%) */
+.el-character {
+  text-transform: uppercase;
+  margin-left: 40%;
+}
+
+/* DIALOGUE — Indented (margin: 0 25% 0 15%) */
+.el-dialogue {
+  margin: 0 25% 0 15%;
+}
+
+/* PARENTHETICAL — Indented, auto-wrapped in parens */
+.el-parenthetical {
+  margin: 0 30% 0 25%;
+}
+
+/* TRANSITION — Uppercase, right-aligned */
+.el-transition {
+  text-transform: uppercase;
+  text-align: right;
+}
+
+/* TITLE_PAGE — Centered, dedicated first page */
+.el-title-page {
+  text-align: center;
+}

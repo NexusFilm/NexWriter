@@ -1,0 +1,82 @@
+/* BlogPostDetailPage — CSS Module using design tokens */
+
+.page {
+  min-height: 100vh;
+  background-color: var(--color-dashboard-bg);
+  padding: 32px 40px;
+  font-family: var(--font-ui);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  text-decoration: none;
+  margin-bottom: 24px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: var(--font-ui);
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.backLink:hover {
+  color: var(--color-accent);
+}
+
+.article {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.category {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-accent);
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 16px 0;
+  line-height: 1.2;
+}
+
+.meta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: 32px;
+}
+
+.content {
+  color: var(--color-text-primary);
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--color-text-secondary);
+  font-size: 16px;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: #e05252;
+  font-size: 14px;
+}
