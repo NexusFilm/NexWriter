@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+
 import { AppError } from '@/types/errors';
 import type { BeatPrompt, BeatExample } from '@/types/blueprint';
 import type { ISuggestionEngine } from '@/types/services';

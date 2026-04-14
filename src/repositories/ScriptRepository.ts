@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+
 import { AppError } from '@/types/errors';
 import type { Script, ScriptVersion, ScreenplayElement } from '@/types/screenplay';
 import type { IScriptRepository } from '@/types/repositories';

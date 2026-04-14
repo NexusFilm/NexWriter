@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+
 import { AppError } from '@/types/errors';
 import type { Tier, GatedFeature } from '@/types/subscription';
 import type { ITierGateService } from '@/types/services';

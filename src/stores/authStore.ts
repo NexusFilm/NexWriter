@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { AuthRepository } from '@/repositories/AuthRepository';
-import { supabase } from '@/lib/supabase';
+import { supabase, hasSupabase } from '@/lib/supabase';
 import type { AuthState } from '@/types/stores';
 import type { Tier } from '@/types/subscription';
 
@@ -45,7 +45,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   refreshTier: async () => {
     const { user } = get();
-    if (!user) return;
+    if (!user || !supabase) return;
 
     const { data, error } = await supabase
       .from('sw_user_profiles')
@@ -58,3 +58,35 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 }));
+
+// Initialize auth state — check for existing session on app load
+function initAuth() {
+  if (!hasSupabase) {
+    // No Supabase configured — stop loading, show login
+    useAuthStore.setState({ loading: false });
+    return;
+  }
+
+  supabase.auth.getSession().then(({ data }) => {
+    if (data.session?.user) {
+      useAuthStore.setState({ user: data.session.user, loading: false });
+      useAuthStore.getState().refreshTier();
+    } else {
+      useAuthStore.setState({ loading: false });
+    }
+  }).catch(() => {
+    useAuthStore.setState({ loading: false });
+  });
+
+  // Listen for auth state changes (e.g., after OAuth redirect)
+  supabase.auth.onAuthStateChange((_event, session) => {
+    if (session?.user) {
+      useAuthStore.setState({ user: session.user, loading: false });
+      useAuthStore.getState().refreshTier();
+    } else {
+      useAuthStore.setState({ user: null, tier: 'free', loading: false });
+    }
+  });
+}
+
+initAuth();
