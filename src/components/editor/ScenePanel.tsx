@@ -11,7 +11,7 @@ export function ScenePanel({ scenes, onSceneClick }: ScenePanelProps) {
     return (
       <div className={styles.panel}>
         <h3 className={styles.heading}>Scenes</h3>
-        <p className={styles.empty}>No scenes yet</p>
+        <p className={styles.empty}>No scenes yet. Add a Scene Heading to get started.</p>
       </div>
     );
   }
@@ -19,20 +19,24 @@ export function ScenePanel({ scenes, onSceneClick }: ScenePanelProps) {
   return (
     <div className={styles.panel}>
       <h3 className={styles.heading}>Scenes</h3>
-      <ol className={styles.list}>
+      <div className={styles.list}>
         {scenes.map((scene) => (
-          <li key={scene.elementId}>
-            <button
-              className={styles.entry}
-              onClick={() => onSceneClick(scene.elementId)}
-              type="button"
-            >
-              <span className={styles.index}>{scene.index}.</span>
-              <span className={styles.text}>{scene.text || 'Untitled scene'}</span>
-            </button>
-          </li>
+          <button
+            key={scene.elementId}
+            className={styles.card}
+            onClick={() => onSceneClick(scene.elementId)}
+            type="button"
+          >
+            <div className={styles.cardHeader}>
+              <span className={styles.index}>{scene.index}</span>
+              <span className={styles.cardTitle}>{scene.text || 'Untitled scene'}</span>
+            </div>
+            {scene.preview && (
+              <p className={styles.cardPreview}>{scene.preview}</p>
+            )}
+          </button>
         ))}
-      </ol>
+      </div>
     </div>
   );
 }

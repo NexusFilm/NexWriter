@@ -8,11 +8,14 @@ import { AutosaveManager } from '@/services/AutosaveManager';
 import { editorStateToElements, elementsToEditorState } from '@/editor/serialization';
 import type { TipTapDocJSON } from '@/editor/serialization';
 import { EditorToolbar } from '@/components/editor/EditorToolbar';
+import { ElementToolbar } from '@/components/editor/ElementToolbar';
 import { SidePanel } from '@/components/editor/SidePanel';
 import { ScreenplayEditor } from '@/editor/ScreenplayEditor';
 import { computePageCount } from '@/utils/pageCount';
 import { parseScenes } from '@/services/SceneParser';
 import { parseCharacters } from '@/services/CharacterParser';
+import type { ElementType } from '@/types/screenplay';
+import type { Editor } from '@tiptap/react';
 import styles from './EditorPage.module.css';
 
 const scriptRepo = new ScriptRepository();
@@ -35,6 +38,10 @@ export function EditorPage() {
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState('Untitled Script');
   const [editorContent, setEditorContent] = useState<TipTapDocJSON | null>(null);
+  const [activeElementType, setActiveElementType] = useState<ElementType | null>(null);
+
+  // TipTap editor instance ref
+  const editorRef = useRef<Editor | null>(null);
 
   // Track whether the content update came from the editor itself
   const isEditorUpdate = useRef(false);
@@ -68,7 +75,35 @@ export function EditorPage() {
 
   const handleElementScroll = useCallback((_elementId: string) => {
     // Scroll-to-element would be wired to the TipTap editor instance
-    // This is a callback stub for the presentational components
+  }, []);
+
+  // Callback when editor instance is ready
+  const handleEditorReady = useCallback((editor: Editor) => {
+    editorRef.current = editor;
+  }, []);
+
+  // Callback when selection changes — reports current element type
+  const handleSelectionUpdate = useCallback((elementType: ElementType | null) => {
+    setActiveElementType(elementType);
+  }, []);
+
+  // Handle element type button click from the left toolbar
+  const handleElementTypeClick = useCallback((type: ElementType) => {
+    const editor = editorRef.current;
+    if (!editor) return;
+
+    const currentAttrs = editor.getAttributes('screenplayBlock');
+    if (currentAttrs?.elementType) {
+      // Change current block's type
+      editor.chain().focus().updateAttributes('screenplayBlock', { elementType: type }).run();
+    } else {
+      // Insert a new block of this type
+      editor.chain().focus().insertContent({
+        type: 'screenplayBlock',
+        attrs: { elementType: type, elementId: '', order: 0 },
+      }).run();
+    }
+    setActiveElementType(type);
   }, []);
 
   // Load script on mount, resolve conflicts, start autosave
@@ -80,12 +115,9 @@ export function EditorPage() {
 
     async function loadScript() {
       try {
-        // Resolve conflict: picks whichever is newer (local draft vs cloud)
         const resolvedElements = await autosave.resolveConflict(scriptId!);
-
         if (cancelled) return;
 
-        // Also fetch the script metadata (title, etc.)
         const loaded = await scriptRepo.getScript(scriptId!);
         if (cancelled) return;
 
@@ -95,7 +127,6 @@ export function EditorPage() {
         setEditorContent(elementsToEditorState(resolvedElements));
         setError(null);
 
-        // Start autosave after script is loaded
         autosave.start(scriptId!);
       } catch (err) {
         if (cancelled) return;
@@ -119,7 +150,6 @@ export function EditorPage() {
       const newElements = editorStateToElements(doc);
       isEditorUpdate.current = true;
       setElements(newElements);
-      // Feed changes to AutosaveManager (handles debounce + save status)
       autosaveManagerRef.current?.onContentChange(newElements);
     },
     [setElements],
@@ -138,13 +168,12 @@ export function EditorPage() {
           });
         }
       } catch {
-        // Title save failed silently — toolbar will still show the local value
+        // Title save failed silently
       }
     },
     [scriptId, script],
   );
 
-  // Compute page count from elements using screenplay layout rules
   const pageCount = computePageCount(elements);
 
   if (loading) {
@@ -163,15 +192,23 @@ export function EditorPage() {
         saveStatus={saveStatus}
         sidebarOpen={sidebarOpen}
         scriptId={scriptId}
+        editor={editorRef.current}
+        activeElementType={activeElementType}
         onTitleChange={handleTitleChange}
         onToggleSidebar={toggleSidebar}
       />
       <div className={styles.body}>
+        <ElementToolbar
+          activeElementType={activeElementType}
+          onElementTypeClick={handleElementTypeClick}
+        />
         <div className={styles.editorPane}>
           <div className={styles.editorInner}>
             <ScreenplayEditor
               content={editorContent ?? undefined}
               onUpdate={handleEditorUpdate}
+              onEditorReady={handleEditorReady}
+              onSelectionUpdate={handleSelectionUpdate}
             />
           </div>
         </div>

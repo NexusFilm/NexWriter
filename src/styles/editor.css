@@ -7,7 +7,7 @@
   cursor: text;
   font-family: 'Courier Prime', 'Courier New', monospace;
   font-size: 12pt;
-  line-height: 1.5;
+  line-height: 1.0;
   color: #1a1a1a;
   caret-color: #E8A427;
   white-space: pre-wrap;
@@ -18,35 +18,38 @@
   outline: none;
 }
 
-/* Ensure the editor fills its container and is clickable */
+/* Spacing between blocks */
 .ProseMirror > * + * {
-  margin-top: 0.5em;
+  margin-top: 0;
 }
 
 /* Empty editor placeholder */
-.ProseMirror p.is-editor-empty:first-child::before {
-  content: 'Start writing your screenplay…';
+.ProseMirror p.is-editor-empty:first-child::before,
+.ProseMirror .el-action:only-child:empty::before,
+.ProseMirror > div:only-child:empty::before {
+  content: 'Start writing…';
   float: left;
-  color: #999;
+  color: #bbb;
   pointer-events: none;
   height: 0;
   font-style: italic;
 }
 
-/* Screenplay element overrides for light page background */
+/* Screenplay element styles for light parchment page */
 .ProseMirror .el-scene-heading {
   text-transform: uppercase;
   font-weight: bold;
   color: #1a1a1a;
   margin-top: 1em;
-  margin-bottom: 0.25em;
+  margin-bottom: 0;
+  padding-bottom: 0.15em;
 }
 
 .ProseMirror .el-action {
   text-align: left;
   color: #1a1a1a;
-  margin-top: 0.5em;
-  margin-bottom: 0.25em;
+  margin-top: 0.75em;
+  margin-bottom: 0;
 }
 
 .ProseMirror .el-character {
@@ -58,14 +61,16 @@
 }
 
 .ProseMirror .el-dialogue {
-  margin: 0 25% 0.25em 20%;
+  margin: 0 25% 0 20%;
   color: #1a1a1a;
+  margin-top: 0.15em;
 }
 
 .ProseMirror .el-parenthetical {
-  margin: 0 30% 0.25em 28%;
-  color: #555;
+  margin: 0 30% 0 28%;
+  color: #444;
   font-style: italic;
+  margin-top: 0.1em;
 }
 
 .ProseMirror .el-transition {
@@ -73,7 +78,7 @@
   text-align: right;
   color: #1a1a1a;
   margin-top: 0.75em;
-  margin-bottom: 0.25em;
+  margin-bottom: 0;
 }
 
 .ProseMirror .el-title-page {

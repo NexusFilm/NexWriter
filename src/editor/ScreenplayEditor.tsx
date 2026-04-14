@@ -1,14 +1,17 @@
 import { useEffect } from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import { ScreenplayBlock } from './ScreenplayBlock';
 import { KeyboardPlugin } from './KeyboardPlugin';
 import type { TipTapDocJSON } from './serialization';
+import type { ElementType } from '@/types/screenplay';
 
 interface ScreenplayEditorProps {
   content?: TipTapDocJSON;
   onUpdate?: (doc: TipTapDocJSON) => void;
+  onEditorReady?: (editor: Editor) => void;
+  onSelectionUpdate?: (elementType: ElementType | null) => void;
 }
 
 const DEFAULT_CONTENT: TipTapDocJSON = {
@@ -21,7 +24,7 @@ const DEFAULT_CONTENT: TipTapDocJSON = {
   ],
 };
 
-export function ScreenplayEditor({ content, onUpdate }: ScreenplayEditorProps) {
+export function ScreenplayEditor({ content, onUpdate, onEditorReady, onSelectionUpdate }: ScreenplayEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -46,7 +49,29 @@ export function ScreenplayEditor({ content, onUpdate }: ScreenplayEditorProps) {
         onUpdate(ed.getJSON() as TipTapDocJSON);
       }
     },
+    onSelectionUpdate: ({ editor: ed }) => {
+      if (onSelectionUpdate) {
+        const attrs = ed.getAttributes('screenplayBlock');
+        const elementType = (attrs?.elementType as ElementType) ?? null;
+        onSelectionUpdate(elementType);
+      }
+    },
+    onTransaction: ({ editor: ed }) => {
+      // Also report on transaction for element type changes via Tab
+      if (onSelectionUpdate) {
+        const attrs = ed.getAttributes('screenplayBlock');
+        const elementType = (attrs?.elementType as ElementType) ?? null;
+        onSelectionUpdate(elementType);
+      }
+    },
   });
+
+  // Notify parent when editor is ready
+  useEffect(() => {
+    if (editor && onEditorReady) {
+      onEditorReady(editor);
+    }
+  }, [editor, onEditorReady]);
 
   // Sync external content changes into the editor
   useEffect(() => {
