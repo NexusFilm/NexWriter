@@ -21,7 +21,12 @@ export function LoginPage() {
   return (
     <main className={styles.page}>
       <div className={styles.card}>
-        <h1 className={styles.title}>Sign in to DraftKit</h1>
+        <div className={styles.brand}>
+          <span className={styles.logo}>
+            Draft<span className={styles.logoAccent}>Kit</span>
+          </span>
+          <h1 className={styles.title}>Sign in to your account</h1>
+        </div>
         <EmailPasswordForm mode="login" onSubmit={handleEmailLogin} />
         <SocialLoginButtons onProviderLogin={handleProviderLogin} />
         <p className={styles.footer}>

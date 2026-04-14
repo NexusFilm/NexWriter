@@ -5,16 +5,63 @@
   --color-editor-bg: #0D0D0D;
   --color-dashboard-bg: #111111;
   --color-surface: #1A1A1A;
+  --color-surface-raised: #222222;
   --color-border: #2A2A2A;
+  --color-border-hover: #3A3A3A;
   --color-accent: #E8A427;
+  --color-accent-hover: #F0B340;
+  --color-accent-muted: rgba(232, 164, 39, 0.12);
   --color-text-primary: #F0EDE6;
   --color-text-secondary: #7A7A7A;
+  --color-text-tertiary: #555555;
+  --color-danger: #e05252;
+  --color-danger-bg: rgba(248, 113, 113, 0.1);
+  --color-danger-border: rgba(248, 113, 113, 0.2);
 
   /* Typography */
   --font-screenplay: 'Courier Prime', 'Courier New', monospace;
   --font-ui: system-ui, -apple-system, sans-serif;
   --font-size-screenplay: 12pt;
 
-  /* Spacing / Radii */
+  /* Font sizes */
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-md: 15px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 22px;
+  --text-3xl: 28px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Radii */
   --radius: 10px;
+  --radius-sm: 6px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.6);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+
+  /* Layout */
+  --navbar-height: 56px;
+  --sidebar-width: 300px;
 }

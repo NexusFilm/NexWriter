@@ -19,7 +19,7 @@ export function SocialLoginButtons({ onProviderLogin }: SocialLoginButtonsProps)
 
   return (
     <div className={styles.container}>
-      <div className={styles.divider}>or</div>
+      <div className={styles.divider}>or continue with</div>
 
       <button
         type="button"

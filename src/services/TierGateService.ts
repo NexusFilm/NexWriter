@@ -46,7 +46,7 @@ export class TierGateService implements ITierGateService {
       .from('sw_user_profiles')
       .select('script_count')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
 
     if (!profileError && profile && typeof profile.script_count === 'number') {
       return profile.script_count;
@@ -90,15 +90,10 @@ export class TierGateService implements ITierGateService {
       .from('sw_user_profiles')
       .select('tier')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
 
-    if (error) {
-      throw new AppError(
-        error.message,
-        'UNKNOWN_ERROR',
-        'Unable to determine subscription tier. Please try again.',
-        true,
-      );
+    if (error || !data) {
+      return 'free';
     }
 
     return (data.tier as Tier) ?? 'free';

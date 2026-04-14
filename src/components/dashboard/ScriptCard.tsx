@@ -134,36 +134,42 @@ export function ScriptCard({
         if (e.key === 'Enter' && !renaming) handleCardClick();
       }}
     >
-      <div className={styles.header}>
-        {renaming ? (
-          <input
-            ref={inputRef}
-            className={styles.titleInput}
-            value={renameValue}
-            onChange={(e) => setRenameValue(e.target.value)}
-            onBlur={handleRenameCommit}
-            onKeyDown={handleRenameKeyDown}
-            onClick={(e) => e.stopPropagation()}
-            aria-label="Rename script"
-          />
-        ) : (
-          <span className={styles.title}>{script.title}</span>
-        )}
-        <button
-          className={styles.menuBtn}
-          onClick={handleMenuToggle}
-          aria-label="Script actions"
-          aria-haspopup="true"
-          aria-expanded={menuOpen}
-        >
-          ⋮
-        </button>
+      <div className={styles.thumbnail}>
+        <span className={styles.thumbnailIcon}>📄</span>
       </div>
 
-      <div className={styles.meta}>
-        <span>{script.pageCount} {script.pageCount === 1 ? 'page' : 'pages'}</span>
-        <span>·</span>
-        <span>{formatRelativeTime(script.updatedAt)}</span>
+      <div className={styles.cardBody}>
+        <div className={styles.header}>
+          {renaming ? (
+            <input
+              ref={inputRef}
+              className={styles.titleInput}
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+              onBlur={handleRenameCommit}
+              onKeyDown={handleRenameKeyDown}
+              onClick={(e) => e.stopPropagation()}
+              aria-label="Rename script"
+            />
+          ) : (
+            <span className={styles.title}>{script.title}</span>
+          )}
+          <button
+            className={styles.menuBtn}
+            onClick={handleMenuToggle}
+            aria-label="Script actions"
+            aria-haspopup="true"
+            aria-expanded={menuOpen}
+          >
+            ⋮
+          </button>
+        </div>
+
+        <div className={styles.meta}>
+          <span>{script.pageCount} {script.pageCount === 1 ? 'page' : 'pages'}</span>
+          <span className={styles.metaDot}>·</span>
+          <span>{formatRelativeTime(script.updatedAt)}</span>
+        </div>
       </div>
 
       {menuOpen && (

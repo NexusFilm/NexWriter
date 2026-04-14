@@ -3,52 +3,84 @@
 .toolbar {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 8px 16px;
+  gap: var(--space-4);
+  height: var(--navbar-height);
+  padding: 0 var(--space-4);
   background-color: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   font-family: var(--font-ui);
+  flex-shrink: 0;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: var(--text-xl);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.backLink:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-raised);
+  text-decoration: none;
 }
 
 .titleInput {
   flex: 1;
   min-width: 0;
-  padding: 6px 10px;
+  max-width: 400px;
+  height: 36px;
+  padding: 0 var(--space-3);
   background: transparent;
   border: 1px solid transparent;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   color: var(--color-text-primary);
-  font-size: 16px;
+  font-size: var(--text-lg);
   font-weight: 600;
   font-family: var(--font-ui);
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: border-color var(--transition-base), background-color var(--transition-base);
 }
 
 .titleInput:hover {
   border-color: var(--color-border);
+  background-color: var(--color-surface-raised);
 }
 
 .titleInput:focus {
   border-color: var(--color-accent);
+  background-color: var(--color-surface-raised);
+  box-shadow: 0 0 0 3px var(--color-accent-muted);
+}
+
+.spacer {
+  flex: 1;
 }
 
 .meta {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-4);
   flex-shrink: 0;
 }
 
 .pageCount {
   color: var(--color-text-secondary);
-  font-size: 13px;
+  font-size: var(--text-sm);
   white-space: nowrap;
 }
 
 .saveStatus {
-  font-size: 13px;
+  font-size: var(--text-sm);
   white-space: nowrap;
+  font-weight: 500;
 }
 
 .saved {
@@ -60,7 +92,40 @@
 }
 
 .unsaved {
-  color: #e05252;
+  color: var(--color-danger);
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background-color: var(--color-border);
+  flex-shrink: 0;
+}
+
+.toolbarBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 var(--space-3);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.toolbarBtn:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-raised);
+  border-color: var(--color-border-hover);
+  text-decoration: none;
 }
 
 .panelToggle {
@@ -71,15 +136,17 @@
   height: 36px;
   background: transparent;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  font-size: var(--text-lg);
+  transition: all var(--transition-fast);
 }
 
 .panelToggle:hover {
-  background-color: var(--color-border);
+  background-color: var(--color-surface-raised);
   color: var(--color-text-primary);
+  border-color: var(--color-border-hover);
 }
 
 .panelToggleActive {
@@ -89,19 +156,11 @@
 }
 
 .panelToggleActive:hover {
-  opacity: 0.9;
-  background-color: var(--color-accent);
+  background-color: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
   color: var(--color-editor-bg);
 }
 
 .historyLink {
-  color: var(--color-text-secondary);
-  font-size: 13px;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: color 0.15s;
-}
-
-.historyLink:hover {
-  color: var(--color-text-primary);
+  composes: toolbarBtn;
 }

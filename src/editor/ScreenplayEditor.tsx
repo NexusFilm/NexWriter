@@ -61,7 +61,7 @@ export function ScreenplayEditor({ content, onUpdate }: ScreenplayEditorProps) {
 
   return (
     <div
-      style={{ backgroundColor: 'var(--color-editor-bg)', minHeight: '100%' }}
+      style={{ minHeight: '100%' }}
     >
       <EditorContent editor={editor} />
     </div>

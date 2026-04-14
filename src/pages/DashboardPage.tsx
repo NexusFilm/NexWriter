@@ -93,6 +93,7 @@ export function DashboardPage() {
   if (loading) {
     return (
       <div className={styles.page}>
+        <DashboardToolbar onNewScript={handleNewScript} creating={creating} />
         <div className={styles.loading}>Loading scripts…</div>
       </div>
     );
@@ -102,9 +103,27 @@ export function DashboardPage() {
     <div className={styles.page}>
       <DashboardToolbar onNewScript={handleNewScript} creating={creating} />
       {error && <div className={styles.error}>{error}</div>}
+      {scripts.length > 0 && (
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>
+            My Scripts <span className={styles.scriptCount}>({scripts.length})</span>
+          </h2>
+        </div>
+      )}
       {scripts.length === 0 && !error ? (
         <div className={styles.empty}>
-          <span>No scripts yet. Click "New Script" to get started.</span>
+          <div className={styles.emptyIcon}>✎</div>
+          <h2 className={styles.emptyTitle}>Start your first screenplay</h2>
+          <p className={styles.emptyText}>
+            Your scripts will appear here. Create your first one and start writing.
+          </p>
+          <button
+            className={styles.emptyCta}
+            onClick={handleNewScript}
+            disabled={creating}
+          >
+            + New Script
+          </button>
         </div>
       ) : (
         <ScriptCardGrid

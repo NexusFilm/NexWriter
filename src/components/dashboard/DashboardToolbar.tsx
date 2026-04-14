@@ -9,8 +9,13 @@ interface DashboardToolbarProps {
 export function DashboardToolbar({ onNewScript, creating }: DashboardToolbarProps) {
   return (
     <div className={styles.toolbar}>
-      <h1 className={styles.title}>My Scripts</h1>
+      <span className={styles.logo}>
+        Draft<span className={styles.logoAccent}>Kit</span>
+      </span>
       <nav className={styles.nav}>
+        <Link to="/" className={styles.navLinkActive}>
+          Dashboard
+        </Link>
         <Link to="/blueprint/new" className={styles.navLink}>
           Blueprint
         </Link>
@@ -21,14 +26,19 @@ export function DashboardToolbar({ onNewScript, creating }: DashboardToolbarProp
           Settings
         </Link>
       </nav>
-      <button
-        className={styles.newScriptBtn}
-        onClick={onNewScript}
-        disabled={creating}
-        aria-label="Create new script"
-      >
-        + New Script
-      </button>
+      <div className={styles.actions}>
+        <button
+          className={styles.newScriptBtn}
+          onClick={onNewScript}
+          disabled={creating}
+          aria-label="Create new script"
+        >
+          + New Script
+        </button>
+        <div className={styles.userAvatar} aria-label="User menu">
+          U
+        </div>
+      </div>
     </div>
   );
 }

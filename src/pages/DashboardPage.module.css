@@ -3,8 +3,30 @@
 .page {
   min-height: 100vh;
   background-color: var(--color-dashboard-bg);
-  padding: 32px 40px;
+  padding-top: calc(var(--navbar-height) + var(--space-10));
+  padding-left: var(--space-10);
+  padding-right: var(--space-10);
+  padding-bottom: var(--space-12);
   font-family: var(--font-ui);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-8);
+}
+
+.sectionTitle {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.scriptCount {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  font-weight: 400;
 }
 
 .loading {
@@ -13,16 +35,18 @@
   justify-content: center;
   min-height: 60vh;
   color: var(--color-text-secondary);
-  font-size: 16px;
+  font-size: var(--text-lg);
 }
 
 .error {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 60vh;
-  color: #e05252;
-  font-size: 14px;
+  margin-top: var(--space-6);
+  padding: var(--space-4) var(--space-6);
+  color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius);
+  font-size: var(--text-base);
+  text-align: center;
 }
 
 .empty {
@@ -30,8 +54,57 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  min-height: 40vh;
+  gap: var(--space-6);
+  min-height: 50vh;
+  text-align: center;
+}
+
+.emptyIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: var(--color-text-tertiary);
+}
+
+.emptyTitle {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.emptyText {
+  font-size: var(--text-md);
   color: var(--color-text-secondary);
-  font-size: 16px;
+  max-width: 360px;
+  line-height: 1.6;
+}
+
+.emptyCta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 48px;
+  padding: 0 var(--space-8);
+  background-color: var(--color-accent);
+  color: var(--color-editor-bg);
+  border: none;
+  border-radius: var(--radius);
+  font-size: var(--text-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.emptyCta:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.emptyCta:active {
+  transform: scale(0.97);
 }

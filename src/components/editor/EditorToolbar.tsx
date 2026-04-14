@@ -76,6 +76,9 @@ export function EditorToolbar({
 
   return (
     <div className={styles.toolbar}>
+      <Link to="/" className={styles.backLink} aria-label="Back to dashboard">
+        ←
+      </Link>
       <input
         className={styles.titleInput}
         type="text"
@@ -85,6 +88,7 @@ export function EditorToolbar({
         onBlur={handleBlur}
         aria-label="Script title"
       />
+      <div className={styles.spacer} />
       <div className={styles.meta}>
         <span className={styles.pageCount}>
           {pageCount} {pageCount === 1 ? 'page' : 'pages'}
@@ -92,6 +96,7 @@ export function EditorToolbar({
         <span className={`${styles.saveStatus} ${statusClass}`}>
           {SAVE_STATUS_LABELS[saveStatus]}
         </span>
+        <div className={styles.divider} />
         {scriptId && (
           <Link to={`/history/${scriptId}`} className={styles.historyLink} aria-label="Version history">
             History

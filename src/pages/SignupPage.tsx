@@ -21,7 +21,12 @@ export function SignupPage() {
   return (
     <main className={styles.page}>
       <div className={styles.card}>
-        <h1 className={styles.title}>Create your account</h1>
+        <div className={styles.brand}>
+          <span className={styles.logo}>
+            Draft<span className={styles.logoAccent}>Kit</span>
+          </span>
+          <h1 className={styles.title}>Create your account</h1>
+        </div>
         <EmailPasswordForm mode="signup" onSubmit={handleEmailSignup} />
         <SocialLoginButtons onProviderLogin={handleProviderLogin} />
         <p className={styles.footer}>

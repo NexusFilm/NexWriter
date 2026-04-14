@@ -4,28 +4,53 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 20px;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: border-color 0.15s ease;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+  overflow: hidden;
 }
 
 .card:hover {
   border-color: var(--color-accent);
+  box-shadow: 0 4px 20px rgba(232, 164, 39, 0.08);
+  transform: translateY(-2px);
+}
+
+.thumbnail {
+  height: 100px;
+  background: linear-gradient(135deg, var(--color-surface-raised) 0%, var(--color-surface) 100%);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.thumbnailIcon {
+  font-size: 28px;
+  color: var(--color-text-tertiary);
+  opacity: 0.5;
+}
+
+.cardBody {
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .title {
-  font-size: 16px;
+  font-size: var(--text-lg);
   font-weight: 600;
   color: var(--color-text-primary);
   font-family: var(--font-ui);
@@ -34,17 +59,18 @@
   white-space: nowrap;
   flex: 1;
   min-width: 0;
+  line-height: 1.3;
 }
 
 .titleInput {
-  font-size: 16px;
+  font-size: var(--text-lg);
   font-weight: 600;
   color: var(--color-text-primary);
   font-family: var(--font-ui);
   background: transparent;
   border: 1px solid var(--color-accent);
-  border-radius: 4px;
-  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  padding: 2px var(--space-2);
   outline: none;
   flex: 1;
   min-width: 0;
@@ -53,10 +79,14 @@
 .meta {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 13px;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
   font-family: var(--font-ui);
+}
+
+.metaDot {
+  color: var(--color-text-tertiary);
 }
 
 .menuBtn {
@@ -64,43 +94,50 @@
   border: none;
   color: var(--color-text-secondary);
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
   font-size: 18px;
   line-height: 1;
   flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
 }
 
 .menuBtn:hover {
   color: var(--color-text-primary);
-  background-color: var(--color-border);
+  background-color: var(--color-surface-raised);
 }
 
 /* Context menu */
 .contextMenu {
   position: absolute;
   top: 48px;
-  right: 12px;
+  right: var(--space-3);
   z-index: 20;
   min-width: 160px;
-  background-color: var(--color-surface);
+  background-color: var(--color-surface-raised);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 4px 0;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  padding: var(--space-1) 0;
+  box-shadow: var(--shadow-lg);
 }
 
 .menuItem {
   display: block;
   width: 100%;
-  padding: 8px 16px;
+  padding: var(--space-2) var(--space-4);
   background: none;
   border: none;
   color: var(--color-text-primary);
-  font-size: 14px;
+  font-size: var(--text-base);
   font-family: var(--font-ui);
   text-align: left;
   cursor: pointer;
+  transition: background-color var(--transition-fast);
 }
 
 .menuItem:hover {
@@ -109,7 +146,7 @@
 
 .menuItemDanger {
   composes: menuItem;
-  color: #e05252;
+  color: var(--color-danger);
 }
 
 /* Delete confirm overlay */
@@ -120,34 +157,37 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  background-color: rgba(13, 13, 13, 0.92);
-  border-radius: var(--radius);
+  gap: var(--space-4);
+  background-color: rgba(13, 13, 13, 0.94);
+  border-radius: var(--radius-lg);
   z-index: 30;
-  padding: 16px;
+  padding: var(--space-6);
 }
 
 .confirmText {
-  font-size: 14px;
+  font-size: var(--text-base);
   color: var(--color-text-primary);
   font-family: var(--font-ui);
   text-align: center;
+  line-height: 1.5;
 }
 
 .confirmActions {
   display: flex;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .confirmDeleteBtn {
-  padding: 6px 16px;
-  background-color: #e05252;
+  padding: var(--space-2) var(--space-5);
+  background-color: var(--color-danger);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
   font-family: var(--font-ui);
   cursor: pointer;
+  transition: opacity var(--transition-fast);
 }
 
 .confirmDeleteBtn:hover {
@@ -155,16 +195,18 @@
 }
 
 .confirmCancelBtn {
-  padding: 6px 16px;
-  background-color: var(--color-border);
+  padding: var(--space-2) var(--space-5);
+  background-color: var(--color-surface-raised);
   color: var(--color-text-primary);
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 500;
   font-family: var(--font-ui);
   cursor: pointer;
+  transition: background-color var(--transition-fast);
 }
 
 .confirmCancelBtn:hover {
-  opacity: 0.9;
+  background-color: var(--color-border);
 }

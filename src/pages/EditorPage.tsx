@@ -168,10 +168,12 @@ export function EditorPage() {
       />
       <div className={styles.body}>
         <div className={styles.editorPane}>
-          <ScreenplayEditor
-            content={editorContent ?? undefined}
-            onUpdate={handleEditorUpdate}
-          />
+          <div className={styles.editorInner}>
+            <ScreenplayEditor
+              content={editorContent ?? undefined}
+              onUpdate={handleEditorUpdate}
+            />
+          </div>
         </div>
         {sidebarOpen && (
           <div className={styles.sidePanel}>

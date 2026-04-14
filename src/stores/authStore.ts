@@ -47,14 +47,33 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const { user } = get();
     if (!user || !supabase) return;
 
-    const { data, error } = await supabase
-      .from('sw_user_profiles')
-      .select('tier')
-      .eq('id', user.id)
-      .single();
+    try {
+      // Try to get existing profile
+      const { data, error } = await supabase
+        .from('sw_user_profiles')
+        .select('tier')
+        .eq('id', user.id)
+        .maybeSingle();
 
-    if (!error && data) {
-      set({ tier: data.tier as Tier });
+      if (!error && data) {
+        set({ tier: data.tier as Tier });
+        return;
+      }
+
+      // Profile doesn't exist yet — create it (OAuth users may not trigger the DB hook)
+      await supabase
+        .from('sw_user_profiles')
+        .upsert({
+          id: user.id,
+          email: user.email ?? '',
+          tier: 'free',
+          script_count: 0,
+        }, { onConflict: 'id' });
+
+      set({ tier: 'free' });
+    } catch {
+      // Silently default to free tier on any error
+      set({ tier: 'free' });
     }
   },
 }));
