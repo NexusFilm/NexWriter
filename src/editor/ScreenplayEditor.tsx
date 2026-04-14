@@ -61,7 +61,8 @@ export function ScreenplayEditor({ content, onUpdate }: ScreenplayEditorProps) {
 
   return (
     <div
-      style={{ minHeight: '100%' }}
+      style={{ minHeight: '100%', cursor: 'text' }}
+      onClick={() => editor?.commands.focus()}
     >
       <EditorContent editor={editor} />
     </div>

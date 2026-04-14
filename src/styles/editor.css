@@ -1,0 +1,88 @@
+/* TipTap / ProseMirror Editor Styles */
+
+/* The main editable area — must be globally scoped since TipTap generates this class */
+.ProseMirror {
+  outline: none;
+  min-height: 100%;
+  cursor: text;
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  font-size: 12pt;
+  line-height: 1.5;
+  color: #1a1a1a;
+  caret-color: #E8A427;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
+
+/* Ensure the editor fills its container and is clickable */
+.ProseMirror > * + * {
+  margin-top: 0.5em;
+}
+
+/* Empty editor placeholder */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: 'Start writing your screenplay…';
+  float: left;
+  color: #999;
+  pointer-events: none;
+  height: 0;
+  font-style: italic;
+}
+
+/* Screenplay element overrides for light page background */
+.ProseMirror .el-scene-heading {
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-top: 1em;
+  margin-bottom: 0.25em;
+}
+
+.ProseMirror .el-action {
+  text-align: left;
+  color: #1a1a1a;
+  margin-top: 0.5em;
+  margin-bottom: 0.25em;
+}
+
+.ProseMirror .el-character {
+  text-transform: uppercase;
+  margin-left: 35%;
+  color: #1a1a1a;
+  margin-top: 0.75em;
+  margin-bottom: 0;
+}
+
+.ProseMirror .el-dialogue {
+  margin: 0 25% 0.25em 20%;
+  color: #1a1a1a;
+}
+
+.ProseMirror .el-parenthetical {
+  margin: 0 30% 0.25em 28%;
+  color: #555;
+  font-style: italic;
+}
+
+.ProseMirror .el-transition {
+  text-transform: uppercase;
+  text-align: right;
+  color: #1a1a1a;
+  margin-top: 0.75em;
+  margin-bottom: 0.25em;
+}
+
+.ProseMirror .el-title-page {
+  text-align: center;
+  color: #1a1a1a;
+  margin-bottom: 1em;
+}
+
+/* Selection styling inside the editor */
+.ProseMirror ::selection {
+  background-color: rgba(232, 164, 39, 0.25);
+}
