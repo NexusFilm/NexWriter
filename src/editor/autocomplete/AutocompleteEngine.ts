@@ -1,5 +1,7 @@
 import type { ElementType } from '@/types/screenplay';
+import type { Suggestion } from './autocompleteState';
 import {
+  CROSS_ELEMENT_PATTERNS,
   SCENE_HEADING_PREFIXES,
   SCENE_LOCATIONS,
   SCENE_TIMES,
@@ -11,6 +13,17 @@ import {
 
 const MAX_SUGGESTIONS = 8;
 
+/** Human-readable category labels for element types */
+const CATEGORY_LABELS: Record<ElementType, string> = {
+  SCENE_HEADING: 'Scene Heading',
+  ACTION: 'Action',
+  CHARACTER: 'Character',
+  DIALOGUE: 'Dialogue',
+  PARENTHETICAL: 'Parenthetical',
+  TRANSITION: 'Transition',
+  TITLE_PAGE: 'Title Page',
+};
+
 /**
  * Determines which phase of a scene heading the user is in:
  * - 'prefix': typing INT./EXT. etc.
@@ -19,8 +32,6 @@ const MAX_SUGGESTIONS = 8;
  */
 function getSceneHeadingPhase(text: string): 'prefix' | 'location' | 'time' {
   const upper = text.toUpperCase().trimStart();
-
-  // Check if we already have a prefix followed by content that looks like it has a location
   const prefixPattern = /^(INT\.\/?EXT\.|EXT\.\/?INT\.|INT\.|EXT\.|I\/E\.)\s+/i;
   const prefixMatch = upper.match(prefixPattern);
 
@@ -28,11 +39,7 @@ function getSceneHeadingPhase(text: string): 'prefix' | 'location' | 'time' {
     return 'prefix';
   }
 
-  // We have a prefix. Check if there's location content after it.
   const afterPrefix = upper.slice(prefixMatch[0].length);
-
-  // If the text after prefix contains " - " or ends with a space after some location text
-  // and the last segment starts with "- ", we're in time phase
   if (/\s-\s/.test(afterPrefix)) {
     return 'time';
   }
@@ -57,42 +64,44 @@ function getSceneHeadingSearchTerm(text: string, phase: 'prefix' | 'location' | 
   const afterPrefix = upper.slice(prefixMatch[0].length);
 
   if (phase === 'time') {
-    // Get the part after the last space that follows the location
     const dashIdx = afterPrefix.lastIndexOf(' - ');
     if (dashIdx >= 0) {
       return afterPrefix.slice(dashIdx + 1).trimStart();
     }
-    // User just typed a space after location, suggest times
     return '';
   }
 
-  // Location phase: return what's after the prefix
   return afterPrefix;
 }
 
 /**
- * Filters and ranks suggestions based on a search term using case-insensitive prefix matching.
- * Returns at most MAX_SUGGESTIONS results, ranked by:
- * 1. Exact prefix match first
- * 2. Alphabetical order
+ * Filters candidates by prefix match and returns Suggestion objects.
  */
-function filterAndRank(candidates: string[], searchTerm: string): string[] {
+function filterAndRankToSuggestions(
+  candidates: string[],
+  searchTerm: string,
+  category: string,
+  priority: number,
+  targetElementType?: ElementType,
+): Suggestion[] {
   if (searchTerm.length === 0) {
-    return candidates.slice(0, MAX_SUGGESTIONS);
+    return candidates.slice(0, MAX_SUGGESTIONS).map((c) => ({
+      text: c,
+      label: c,
+      category,
+      priority,
+      targetElementType,
+    }));
   }
 
   const term = searchTerm.toUpperCase();
-
-  const matches = candidates.filter((c) =>
-    c.toUpperCase().startsWith(term),
-  );
+  const matches = candidates.filter((c) => c.toUpperCase().startsWith(term));
 
   // Don't suggest if the only match is exactly what's typed
   if (matches.length === 1 && matches[0].toUpperCase() === term) {
     return [];
   }
 
-  // Sort: exact case match first, then alphabetical
   matches.sort((a, b) => {
     const aExact = a.startsWith(searchTerm) ? 0 : 1;
     const bExact = b.startsWith(searchTerm) ? 0 : 1;
@@ -100,19 +109,82 @@ function filterAndRank(candidates: string[], searchTerm: string): string[] {
     return a.localeCompare(b);
   });
 
-  return matches.slice(0, MAX_SUGGESTIONS);
+  return matches.slice(0, MAX_SUGGESTIONS).map((c) => ({
+    text: c,
+    label: c,
+    category,
+    priority,
+    targetElementType,
+  }));
 }
 
 /**
- * Core autocomplete engine. Given the current text, element type, and existing
- * character names from the script, returns a ranked list of suggestions.
+ * Pass 1: Cross-element pattern detection.
+ * Checks typed text against known screenplay patterns regardless of current element type.
  */
-export function getSuggestions(
+function getCrossElementSuggestions(
+  text: string,
+  currentElementType: ElementType,
+  existingCharacters: string[],
+): Suggestion[] {
+  const trimmed = text.trimStart();
+  if (trimmed.length < 1) return [];
+
+  const lower = trimmed.toLowerCase();
+  const suggestions: Suggestion[] = [];
+
+  // Match against cross-element patterns
+  for (const pat of CROSS_ELEMENT_PATTERNS) {
+    if (pat.pattern.startsWith(lower) || lower.startsWith(pat.pattern)) {
+      // Only suggest if the typed text is a prefix of the pattern or vice versa
+      if (pat.pattern.startsWith(lower) && pat.suggestion.toUpperCase() !== trimmed.toUpperCase()) {
+        const category = currentElementType === pat.targetType
+          ? '' // Hide category when already in the right block type
+          : CATEGORY_LABELS[pat.targetType];
+        suggestions.push({
+          text: pat.suggestion,
+          label: pat.suggestion,
+          category,
+          targetElementType: currentElementType === pat.targetType ? undefined : pat.targetType,
+          priority: pat.targetType === 'SCENE_HEADING' ? 100 : 90,
+        });
+      }
+    }
+  }
+
+  // ALL CAPS text (2+ chars) matching a previously-used character name
+  const upper = trimmed.toUpperCase();
+  if (trimmed.length >= 2 && trimmed === upper) {
+    for (const charName of existingCharacters) {
+      const charUpper = charName.toUpperCase();
+      if (charUpper.startsWith(upper) && charUpper !== upper) {
+        const category = currentElementType === 'CHARACTER'
+          ? ''
+          : CATEGORY_LABELS.CHARACTER;
+        suggestions.push({
+          text: charUpper,
+          label: charUpper,
+          category,
+          targetElementType: currentElementType === 'CHARACTER' ? undefined : 'CHARACTER',
+          priority: 85,
+        });
+      }
+    }
+  }
+
+  return suggestions;
+}
+
+/**
+ * Pass 2: Element-type-specific suggestions (existing logic, lower priority).
+ */
+function getElementTypeSuggestions(
   text: string,
   elementType: ElementType,
-  existingCharacters: string[] = [],
-): string[] {
+  existingCharacters: string[],
+): Suggestion[] {
   const trimmed = text.trimStart();
+  const category = CATEGORY_LABELS[elementType] ?? '';
 
   switch (elementType) {
     case 'SCENE_HEADING': {
@@ -120,70 +192,93 @@ export function getSuggestions(
       const searchTerm = getSceneHeadingSearchTerm(trimmed, phase);
 
       if (phase === 'prefix') {
-        // Even single char "i" should trigger for scene headings
         if (searchTerm.length === 0) return [];
-        return filterAndRank(SCENE_HEADING_PREFIXES, searchTerm);
+        return filterAndRankToSuggestions(SCENE_HEADING_PREFIXES, searchTerm, category, 70);
       }
-
       if (phase === 'location') {
-        return filterAndRank(SCENE_LOCATIONS, searchTerm);
+        return filterAndRankToSuggestions(SCENE_LOCATIONS, searchTerm, category, 70);
       }
-
       if (phase === 'time') {
-        // For time suggestions, match against the "- " prefix
         if (searchTerm.length === 0) {
-          return SCENE_TIMES.slice(0, MAX_SUGGESTIONS);
+          return SCENE_TIMES.slice(0, MAX_SUGGESTIONS).map((c) => ({
+            text: c, label: c, category, priority: 70,
+          }));
         }
-        return filterAndRank(SCENE_TIMES, searchTerm);
+        return filterAndRankToSuggestions(SCENE_TIMES, searchTerm, category, 70);
       }
-
       return [];
     }
 
     case 'TRANSITION': {
       if (trimmed.length < 1) return [];
-      return filterAndRank(TRANSITIONS, trimmed);
+      return filterAndRankToSuggestions(TRANSITIONS, trimmed, category, 70);
     }
 
     case 'CHARACTER': {
-      // Merge existing character names with extensions
-      // If text contains a space and starts with a known character, suggest extensions
       const upperTrimmed = trimmed.toUpperCase();
       const charNames = existingCharacters.map((c) => c.toUpperCase());
 
-      // Check if user has typed a full character name and is adding an extension
       const matchedChar = charNames.find(
         (name) => upperTrimmed.startsWith(name + ' ') || upperTrimmed === name + ' ',
       );
 
       if (matchedChar) {
         const afterName = trimmed.slice(matchedChar.length).trimStart();
-        const fullSuggestions = CHARACTER_EXTENSIONS.map(
-          (ext) => matchedChar + ' ' + ext,
-        );
+        const fullSuggestions = CHARACTER_EXTENSIONS.map((ext) => matchedChar + ' ' + ext);
         if (afterName.length === 0) {
-          return fullSuggestions.slice(0, MAX_SUGGESTIONS);
+          return fullSuggestions.slice(0, MAX_SUGGESTIONS).map((c) => ({
+            text: c, label: c, category, priority: 70,
+          }));
         }
-        return filterAndRank(fullSuggestions, trimmed);
+        return filterAndRankToSuggestions(fullSuggestions, trimmed, category, 70);
       }
 
-      // Otherwise suggest character names
       if (trimmed.length < 1) return [];
       const allCandidates = [...new Set([...charNames])];
-      return filterAndRank(allCandidates, upperTrimmed);
+      return filterAndRankToSuggestions(allCandidates, upperTrimmed, category, 70);
     }
 
     case 'PARENTHETICAL': {
       if (trimmed.length < 1) return [];
-      return filterAndRank(PARENTHETICALS, trimmed);
+      return filterAndRankToSuggestions(PARENTHETICALS, trimmed, category, 70);
     }
 
     case 'ACTION': {
       if (trimmed.length < 1) return [];
-      return filterAndRank(ACTION_STARTERS, trimmed);
+      return filterAndRankToSuggestions(ACTION_STARTERS, trimmed, category, 70);
     }
 
     default:
       return [];
   }
+}
+
+/**
+ * Core autocomplete engine. Two-pass system:
+ * 1. Cross-element pattern detection (highest priority)
+ * 2. Element-type-specific suggestions (lower priority)
+ * Merges, deduplicates, sorts by priority desc, returns top 8.
+ */
+export function getSuggestions(
+  text: string,
+  elementType: ElementType,
+  existingCharacters: string[] = [],
+): Suggestion[] {
+  const pass1 = getCrossElementSuggestions(text, elementType, existingCharacters);
+  const pass2 = getElementTypeSuggestions(text, elementType, existingCharacters);
+
+  // Merge and deduplicate by suggestion text (keep higher priority)
+  const seen = new Map<string, Suggestion>();
+  for (const s of [...pass1, ...pass2]) {
+    const key = s.text.toUpperCase();
+    const existing = seen.get(key);
+    if (!existing || s.priority > existing.priority) {
+      seen.set(key, s);
+    }
+  }
+
+  const merged = Array.from(seen.values());
+  merged.sort((a, b) => b.priority - a.priority);
+
+  return merged.slice(0, MAX_SUGGESTIONS);
 }

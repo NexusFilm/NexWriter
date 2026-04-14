@@ -2,6 +2,7 @@ import { Extension } from '@tiptap/core';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
 import type { ElementType } from '@/types/screenplay';
+import type { Suggestion } from './autocompleteState';
 import { getSuggestions } from './AutocompleteEngine';
 import {
   getAutocompleteState,
@@ -14,7 +15,7 @@ const autocompletePluginKey = new PluginKey('autocomplete');
 
 /**
  * Finds the screenplayBlock node at the current cursor position.
- * Returns the node, its position, and its element type.
+ * Returns the node, its position, depth, and its element type.
  */
 function findCurrentBlock(view: EditorView) {
   const { state } = view;
@@ -26,6 +27,7 @@ function findCurrentBlock(view: EditorView) {
       return {
         node,
         pos: $from.before(d),
+        depth: d,
         elementType: node.attrs.elementType as ElementType,
         text: node.textContent,
       };
@@ -36,19 +38,23 @@ function findCurrentBlock(view: EditorView) {
 
 /**
  * Replaces the text content of the current screenplayBlock with the given suggestion.
- * For scene headings, we handle partial replacement (prefix → location → time).
+ * If the suggestion has a targetElementType, also converts the block type.
+ * For scene headings, handles partial replacement (prefix → location → time).
  */
-function acceptSuggestion(view: EditorView, suggestion: string) {
+function acceptSuggestion(view: EditorView, suggestion: Suggestion) {
   const block = findCurrentBlock(view);
   if (!block) return false;
 
   const { state } = view;
   const { node, pos, elementType } = block;
 
-  let newText = suggestion;
+  let newText = suggestion.text;
 
-  // For scene headings, we need to build the full text
-  if (elementType === 'SCENE_HEADING') {
+  // Determine the effective element type after potential conversion
+  const effectiveType = suggestion.targetElementType ?? elementType;
+
+  // For scene headings (either current or target), handle multi-phase text building
+  if (effectiveType === 'SCENE_HEADING' && elementType === 'SCENE_HEADING') {
     const currentText = node.textContent.toUpperCase().trimStart();
     const prefixPattern = /^(INT\.\/?EXT\.|EXT\.\/?INT\.|INT\.|EXT\.|I\/E\.)\s*/i;
     const prefixMatch = currentText.match(prefixPattern);
@@ -57,19 +63,13 @@ function acceptSuggestion(view: EditorView, suggestion: string) {
       const prefix = prefixMatch[0].trimEnd();
       const afterPrefix = currentText.slice(prefixMatch[0].length);
 
-      // Check if suggestion is a time
-      if (suggestion.startsWith('- ')) {
-        // We're adding time — keep prefix + location + suggestion
+      if (suggestion.text.startsWith('- ')) {
         const dashIdx = afterPrefix.indexOf(' - ');
         const location = dashIdx >= 0 ? afterPrefix.slice(0, dashIdx) : afterPrefix.trimEnd();
-        newText = prefix + ' ' + location + ' ' + suggestion;
+        newText = prefix + ' ' + location + ' ' + suggestion.text;
+      } else if (!suggestion.text.match(/^(INT\.|EXT\.|INT\.\/?EXT\.|I\/E\.)/)) {
+        newText = prefix + ' ' + suggestion.text;
       }
-      // Check if suggestion is a location
-      else if (!suggestion.match(/^(INT\.|EXT\.|INT\.\/?EXT\.|I\/E\.)/)) {
-        // It's a location — keep prefix + new location
-        newText = prefix + ' ' + suggestion;
-      }
-      // Otherwise it's a prefix replacement
     }
   }
 
@@ -82,6 +82,14 @@ function acceptSuggestion(view: EditorView, suggestion: string) {
     tr.delete(from, to);
   }
   tr.insertText(newText, from);
+
+  // If targetElementType is set and differs from current, convert the block
+  if (suggestion.targetElementType && suggestion.targetElementType !== elementType) {
+    tr.setNodeMarkup(pos, undefined, {
+      ...node.attrs,
+      elementType: suggestion.targetElementType,
+    });
+  }
 
   // Move cursor to end of inserted text
   const newCursorPos = from + newText.length;
@@ -113,7 +121,6 @@ export const AutocompleteExtension = Extension.create<AutocompleteExtensionOptio
       Tab: ({ editor }) => {
         const acState = getAutocompleteState();
         if (!acState.visible || acState.suggestions.length === 0) {
-          // Don't handle — let the KeyboardPlugin handle Tab cycling
           return false;
         }
         const suggestion = acState.suggestions[acState.selectedIndex];
@@ -170,7 +177,6 @@ export const AutocompleteExtension = Extension.create<AutocompleteExtensionOptio
                 return;
               }
 
-              // Get cursor coordinates for popup positioning
               try {
                 const coords = view.coordsAtPos(view.state.selection.from);
                 showAutocomplete(

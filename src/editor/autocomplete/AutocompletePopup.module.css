@@ -14,7 +14,10 @@
 }
 
 .item {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   width: 100%;
   padding: 6px 12px;
   margin: 0;
@@ -27,7 +30,6 @@
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
   line-height: 1.4;
 }
 
@@ -42,4 +44,24 @@
 
 .itemSelected:hover {
   background: var(--color-accent-hover);
+}
+
+.itemLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.itemCategory {
+  flex: 0 0 auto;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+
+.itemSelected .itemCategory {
+  color: inherit;
+  opacity: 0.6;
 }

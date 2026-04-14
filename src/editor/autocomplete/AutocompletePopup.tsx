@@ -5,12 +5,13 @@ import {
   getAutocompleteState,
   setSelectedIndex,
   type AutocompleteState,
+  type Suggestion,
 } from './autocompleteState';
 import styles from './AutocompletePopup.module.css';
 
 interface AutocompletePopupProps {
   /** Called when the user clicks a suggestion. The parent should call acceptSuggestion. */
-  onAccept: (suggestion: string) => void;
+  onAccept: (suggestion: Suggestion) => void;
 }
 
 export function AutocompletePopup({ onAccept }: AutocompletePopupProps) {
@@ -28,7 +29,7 @@ export function AutocompletePopup({ onAccept }: AutocompletePopupProps) {
   }, [state.selectedIndex]);
 
   const handleClick = useCallback(
-    (suggestion: string) => {
+    (suggestion: Suggestion) => {
       onAccept(suggestion);
     },
     [onAccept],
@@ -64,19 +65,21 @@ export function AutocompletePopup({ onAccept }: AutocompletePopupProps) {
         const isSelected = index === state.selectedIndex;
         return (
           <button
-            key={suggestion}
+            key={suggestion.text + index}
             ref={isSelected ? selectedRef : undefined}
             className={`${styles.item} ${isSelected ? styles.itemSelected : ''}`}
             role="option"
             aria-selected={isSelected}
             onMouseEnter={() => setSelectedIndex(index)}
             onMouseDown={(e) => {
-              // Prevent editor blur
               e.preventDefault();
               handleClick(suggestion);
             }}
           >
-            {suggestion}
+            <span className={styles.itemLabel}>{suggestion.label}</span>
+            {suggestion.category && (
+              <span className={styles.itemCategory}>{suggestion.category}</span>
+            )}
           </button>
         );
       })}

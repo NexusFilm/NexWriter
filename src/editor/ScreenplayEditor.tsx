@@ -6,7 +6,7 @@ import { ScreenplayBlock } from './ScreenplayBlock';
 import { KeyboardPlugin } from './KeyboardPlugin';
 import { AutocompleteExtension } from './autocomplete/AutocompleteExtension';
 import { AutocompletePopup } from './autocomplete/AutocompletePopup';
-import { getAutocompleteState, hideAutocomplete } from './autocomplete/autocompleteState';
+import { getAutocompleteState, hideAutocomplete, type Suggestion } from './autocomplete/autocompleteState';
 import type { TipTapDocJSON } from './serialization';
 import type { ElementType } from '@/types/screenplay';
 
@@ -98,7 +98,7 @@ export function ScreenplayEditor({ content, onUpdate, onEditorReady, onSelection
 
   // Handle accepting a suggestion from the popup (click)
   const handleAcceptSuggestion = useCallback(
-    (suggestion: string) => {
+    (suggestion: Suggestion) => {
       if (!editor) return;
       const acState = getAutocompleteState();
       if (!acState.visible) return;
@@ -112,10 +112,13 @@ export function ScreenplayEditor({ content, onUpdate, onEditorReady, onSelection
         if (node.type.name === 'screenplayBlock') {
           const pos = $from.before(d);
           const elementType = node.attrs.elementType as ElementType;
-          let newText = suggestion;
+          let newText = suggestion.text;
+
+          // Determine effective type after potential conversion
+          const effectiveType = suggestion.targetElementType ?? elementType;
 
           // For scene headings, build the full text
-          if (elementType === 'SCENE_HEADING') {
+          if (effectiveType === 'SCENE_HEADING' && elementType === 'SCENE_HEADING') {
             const currentText = node.textContent.toUpperCase().trimStart();
             const prefixPattern = /^(INT\.\/?EXT\.|EXT\.\/?INT\.|INT\.|EXT\.|I\/E\.)\s*/i;
             const prefixMatch = currentText.match(prefixPattern);
@@ -124,12 +127,12 @@ export function ScreenplayEditor({ content, onUpdate, onEditorReady, onSelection
               const prefix = prefixMatch[0].trimEnd();
               const afterPrefix = currentText.slice(prefixMatch[0].length);
 
-              if (suggestion.startsWith('- ')) {
+              if (suggestion.text.startsWith('- ')) {
                 const dashIdx = afterPrefix.indexOf(' - ');
                 const location = dashIdx >= 0 ? afterPrefix.slice(0, dashIdx) : afterPrefix.trimEnd();
-                newText = prefix + ' ' + location + ' ' + suggestion;
-              } else if (!suggestion.match(/^(INT\.|EXT\.|INT\.\/?EXT\.|I\/E\.)/)) {
-                newText = prefix + ' ' + suggestion;
+                newText = prefix + ' ' + location + ' ' + suggestion.text;
+              } else if (!suggestion.text.match(/^(INT\.|EXT\.|INT\.\/?EXT\.|I\/E\.)/)) {
+                newText = prefix + ' ' + suggestion.text;
               }
             }
           }
@@ -141,6 +144,15 @@ export function ScreenplayEditor({ content, onUpdate, onEditorReady, onSelection
             tr.delete(from, to);
           }
           tr.insertText(newText, from);
+
+          // If targetElementType is set and differs from current, convert the block
+          if (suggestion.targetElementType && suggestion.targetElementType !== elementType) {
+            tr.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              elementType: suggestion.targetElementType,
+            });
+          }
+
           view.dispatch(tr);
           hideAutocomplete();
           break;

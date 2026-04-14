@@ -5,6 +5,37 @@ import type { ElementType } from '@/types/screenplay';
  * Used by the AutocompleteEngine to provide context-aware suggestions.
  */
 
+/**
+ * Cross-element patterns: recognized regardless of current element type.
+ * When matched, the suggestion includes a targetType to convert the block.
+ */
+export interface CrossElementPattern {
+  pattern: string;
+  suggestion: string;
+  targetType: ElementType;
+}
+
+export const CROSS_ELEMENT_PATTERNS: CrossElementPattern[] = [
+  // Scene heading triggers
+  { pattern: 'int', suggestion: 'INT.', targetType: 'SCENE_HEADING' },
+  { pattern: 'interior', suggestion: 'INT.', targetType: 'SCENE_HEADING' },
+  { pattern: 'ext', suggestion: 'EXT.', targetType: 'SCENE_HEADING' },
+  { pattern: 'exterior', suggestion: 'EXT.', targetType: 'SCENE_HEADING' },
+  { pattern: 'i/e', suggestion: 'INT./EXT.', targetType: 'SCENE_HEADING' },
+
+  // Transition triggers
+  { pattern: 'fade in', suggestion: 'FADE IN:', targetType: 'TRANSITION' },
+  { pattern: 'fade out', suggestion: 'FADE OUT.', targetType: 'TRANSITION' },
+  { pattern: 'fade to', suggestion: 'FADE TO:', targetType: 'TRANSITION' },
+  { pattern: 'cut to', suggestion: 'CUT TO:', targetType: 'TRANSITION' },
+  { pattern: 'dissolve', suggestion: 'DISSOLVE TO:', targetType: 'TRANSITION' },
+  { pattern: 'smash cut', suggestion: 'SMASH CUT TO:', targetType: 'TRANSITION' },
+  { pattern: 'match cut', suggestion: 'MATCH CUT TO:', targetType: 'TRANSITION' },
+  { pattern: 'jump cut', suggestion: 'JUMP CUT TO:', targetType: 'TRANSITION' },
+  { pattern: 'wipe', suggestion: 'WIPE TO:', targetType: 'TRANSITION' },
+  { pattern: 'intercut', suggestion: 'INTERCUT:', targetType: 'TRANSITION' },
+];
+
 export const SCENE_HEADING_PREFIXES: string[] = [
   'INT.',
   'EXT.',
