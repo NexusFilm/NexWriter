@@ -1,9 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import { ScreenplayBlock } from './ScreenplayBlock';
 import { KeyboardPlugin } from './KeyboardPlugin';
+import { AutocompleteExtension } from './autocomplete/AutocompleteExtension';
+import { AutocompletePopup } from './autocomplete/AutocompletePopup';
+import { getAutocompleteState, hideAutocomplete } from './autocomplete/autocompleteState';
 import type { TipTapDocJSON } from './serialization';
 import type { ElementType } from '@/types/screenplay';
 
@@ -12,6 +15,8 @@ interface ScreenplayEditorProps {
   onUpdate?: (doc: TipTapDocJSON) => void;
   onEditorReady?: (editor: Editor) => void;
   onSelectionUpdate?: (elementType: ElementType | null) => void;
+  /** List of unique character names from the current script for autocomplete */
+  characterNames?: string[];
 }
 
 const DEFAULT_CONTENT: TipTapDocJSON = {
@@ -24,7 +29,11 @@ const DEFAULT_CONTENT: TipTapDocJSON = {
   ],
 };
 
-export function ScreenplayEditor({ content, onUpdate, onEditorReady, onSelectionUpdate }: ScreenplayEditorProps) {
+export function ScreenplayEditor({ content, onUpdate, onEditorReady, onSelectionUpdate, characterNames = [] }: ScreenplayEditorProps) {
+  // Keep a stable ref to characterNames so the extension always reads the latest
+  const characterNamesRef = useMemo(() => ({ current: characterNames }), []);
+  characterNamesRef.current = characterNames;
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -41,6 +50,9 @@ export function ScreenplayEditor({ content, onUpdate, onEditorReady, onSelection
       ScreenplayBlock,
       Underline,
       KeyboardPlugin,
+      AutocompleteExtension.configure({
+        getCharacterNames: () => characterNamesRef.current,
+      }),
     ],
     editable: true,
     content: content ?? DEFAULT_CONTENT,
@@ -84,12 +96,67 @@ export function ScreenplayEditor({ content, onUpdate, onEditorReady, onSelection
     }
   }, [editor, content]);
 
+  // Handle accepting a suggestion from the popup (click)
+  const handleAcceptSuggestion = useCallback(
+    (suggestion: string) => {
+      if (!editor) return;
+      const acState = getAutocompleteState();
+      if (!acState.visible) return;
+
+      const { state, view } = editor;
+      const { $from } = state.selection;
+
+      // Find the current screenplayBlock
+      for (let d = $from.depth; d >= 1; d--) {
+        const node = $from.node(d);
+        if (node.type.name === 'screenplayBlock') {
+          const pos = $from.before(d);
+          const elementType = node.attrs.elementType as ElementType;
+          let newText = suggestion;
+
+          // For scene headings, build the full text
+          if (elementType === 'SCENE_HEADING') {
+            const currentText = node.textContent.toUpperCase().trimStart();
+            const prefixPattern = /^(INT\.\/?EXT\.|EXT\.\/?INT\.|INT\.|EXT\.|I\/E\.)\s*/i;
+            const prefixMatch = currentText.match(prefixPattern);
+
+            if (prefixMatch) {
+              const prefix = prefixMatch[0].trimEnd();
+              const afterPrefix = currentText.slice(prefixMatch[0].length);
+
+              if (suggestion.startsWith('- ')) {
+                const dashIdx = afterPrefix.indexOf(' - ');
+                const location = dashIdx >= 0 ? afterPrefix.slice(0, dashIdx) : afterPrefix.trimEnd();
+                newText = prefix + ' ' + location + ' ' + suggestion;
+              } else if (!suggestion.match(/^(INT\.|EXT\.|INT\.\/?EXT\.|I\/E\.)/)) {
+                newText = prefix + ' ' + suggestion;
+              }
+            }
+          }
+
+          const from = pos + 1;
+          const to = from + node.content.size;
+          const tr = state.tr;
+          if (node.content.size > 0) {
+            tr.delete(from, to);
+          }
+          tr.insertText(newText, from);
+          view.dispatch(tr);
+          hideAutocomplete();
+          break;
+        }
+      }
+    },
+    [editor],
+  );
+
   return (
     <div
       style={{ minHeight: '100%', cursor: 'text' }}
       onClick={() => editor?.commands.focus()}
     >
       <EditorContent editor={editor} />
+      <AutocompletePopup onAccept={handleAcceptSuggestion} />
     </div>
   );
 }

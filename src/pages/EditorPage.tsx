@@ -209,6 +209,7 @@ export function EditorPage() {
               onUpdate={handleEditorUpdate}
               onEditorReady={handleEditorReady}
               onSelectionUpdate={handleSelectionUpdate}
+              characterNames={characters.map((c) => c.name)}
             />
           </div>
         </div>
