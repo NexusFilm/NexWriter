@@ -56,8 +56,6 @@ export function PaywallModal() {
   const hidePaywallModal = useUIStore((s) => s.hidePaywallModal);
   const user = useAuthStore((s) => s.user);
   const currentTier = useAuthStore((s) => s.tier);
-  const refreshTier = useAuthStore((s) => s.refreshTier);
-
   const [loading, setLoading] = useState<Tier | null>(null);
   const [error, setError] = useState<string | null>(null);
 

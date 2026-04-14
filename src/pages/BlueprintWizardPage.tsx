@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useBlueprintStore } from '@/stores/blueprintStore';
 import { BlueprintRepository } from '@/repositories/BlueprintRepository';
 import { SuggestionEngine } from '@/services/SuggestionEngine';
+import { useEditorStore } from '@/stores/editorStore';
 import { generateScaffold } from '@/services/ScaffoldGenerator';
 import { FrameworkSelector } from '@/components/blueprint/FrameworkSelector';
 import { GenreToneConfig } from '@/components/blueprint/GenreToneConfig';
@@ -157,9 +158,6 @@ export function BlueprintWizardPage() {
 
   const handleStartWriting = () => {
     const scaffold = generateScaffold(answers, beats);
-    // Store scaffold in editor store and navigate to editor
-    // The EditorPage will pick up the scaffold from the store
-    const { useEditorStore } = require('@/stores/editorStore');
     useEditorStore.getState().setElements(scaffold);
     navigate('/');
   };

@@ -99,7 +99,7 @@ export function parseFDX(fdx: string): ScreenplayElement[] {
   let index = 0;
   while (para) {
     if (para.node.nodeName === 'Paragraph') {
-      const node = para.node as Element;
+      const node = para.node as unknown as Element;
       const elementType = node.getAttribute('ElementType');
       const elementId = node.getAttribute('ElementId');
       const order = node.getAttribute('Order');

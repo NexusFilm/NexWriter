@@ -35,12 +35,22 @@ export class AutosaveManager implements IAutosaveManager {
   private pendingElements: ScreenplayElement[] | null = null;
   private lastSavedElements: ScreenplayElement[] | null = null;
 
+  scriptRepository: IScriptRepository;
+  getTier: () => Tier;
+  onSaveStatusChange?: (status: 'saved' | 'saving' | 'unsaved') => void;
+  onOffline?: () => void;
+
   constructor(
-    private scriptRepository: IScriptRepository,
-    private getTier: () => Tier,
-    private onSaveStatusChange?: (status: 'saved' | 'saving' | 'unsaved') => void,
-    private onOffline?: () => void,
-  ) {}
+    scriptRepository: IScriptRepository,
+    getTier: () => Tier,
+    onSaveStatusChange?: (status: 'saved' | 'saving' | 'unsaved') => void,
+    onOffline?: () => void,
+  ) {
+    this.scriptRepository = scriptRepository;
+    this.getTier = getTier;
+    this.onSaveStatusChange = onSaveStatusChange;
+    this.onOffline = onOffline;
+  }
 
   start(scriptId: string): void {
     this.stop();

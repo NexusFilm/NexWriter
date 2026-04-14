@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf';
-import type { Script, ScreenplayElement, ElementType } from '@/types/screenplay';
+import type { Script, ElementType } from '@/types/screenplay';
 
 // US Letter dimensions in points (72 pts/inch)
 const PAGE_WIDTH = 612; // 8.5"

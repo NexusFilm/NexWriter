@@ -1,4 +1,4 @@
-import type { ScreenplayElement, ElementType } from '@/types/screenplay';
+import type { ScreenplayElement } from '@/types/screenplay';
 
 const SCENE_HEADING_PREFIXES = ['INT.', 'EXT.', 'INT./EXT.', 'EXT./INT.', 'I/E.', 'E/I.'];
 
