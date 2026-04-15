@@ -26,6 +26,17 @@ export function cycleElementType(current: ElementType): ElementType {
 }
 
 /**
+ * Pure function: returns the previous ElementType in the Tab cycle (reverse).
+ */
+export function reverseCycleElementType(current: ElementType): ElementType {
+  const idx = ELEMENT_TYPE_CYCLE.indexOf(current);
+  if (idx === -1) {
+    return ELEMENT_TYPE_CYCLE[ELEMENT_TYPE_CYCLE.length - 1];
+  }
+  return ELEMENT_TYPE_CYCLE[(idx - 1 + ELEMENT_TYPE_CYCLE.length) % ELEMENT_TYPE_CYCLE.length];
+}
+
+/**
  * Pure function: determines the ElementType for a new block created on Enter.
  * If the current block is empty, returns ACTION (convert-in-place).
  * Otherwise follows the context-aware rules from the spec.
@@ -53,8 +64,33 @@ export function getNextElementTypeOnEnter(
 }
 
 /**
+ * Helper: finds the current screenplayBlock and changes its elementType.
+ */
+function setCurrentBlockType(editor: { state: any; view: any }, type: ElementType): boolean {
+  const { state, view } = editor;
+  const { $from } = state.selection;
+
+  for (let d = $from.depth; d >= 1; d--) {
+    const node = $from.node(d);
+    if (node.type.name === 'screenplayBlock') {
+      const blockPos = $from.before(d);
+      view.dispatch(
+        state.tr.setNodeMarkup(blockPos, undefined, {
+          ...node.attrs,
+          elementType: type,
+        }),
+      );
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * TipTap Extension that handles screenplay-specific keyboard behavior:
- * - Tab: cycles the current block's elementType through the defined order
+ * - Tab: cycles the current block's elementType forward
+ * - Shift+Tab: cycles the current block's elementType backward
+ * - Ctrl+1-6: directly set element type (Scene, Action, Character, Dialogue, Paren, Transition)
  * - Enter: context-aware new block creation based on current element type
  */
 export const KeyboardPlugin = Extension.create({
@@ -62,6 +98,42 @@ export const KeyboardPlugin = Extension.create({
 
   addKeyboardShortcuts() {
     return {
+      // Ctrl+1 = Scene Heading
+      'Mod-1': ({ editor }) => setCurrentBlockType(editor, 'SCENE_HEADING'),
+      // Ctrl+2 = Action
+      'Mod-2': ({ editor }) => setCurrentBlockType(editor, 'ACTION'),
+      // Ctrl+3 = Character
+      'Mod-3': ({ editor }) => setCurrentBlockType(editor, 'CHARACTER'),
+      // Ctrl+4 = Dialogue
+      'Mod-4': ({ editor }) => setCurrentBlockType(editor, 'DIALOGUE'),
+      // Ctrl+5 = Parenthetical
+      'Mod-5': ({ editor }) => setCurrentBlockType(editor, 'PARENTHETICAL'),
+      // Ctrl+6 = Transition
+      'Mod-6': ({ editor }) => setCurrentBlockType(editor, 'TRANSITION'),
+
+      // Shift+Tab: reverse cycle element type
+      'Shift-Tab': ({ editor }) => {
+        const { state, view } = editor;
+        const { $from } = state.selection;
+
+        for (let d = $from.depth; d >= 1; d--) {
+          const node = $from.node(d);
+          if (node.type.name === 'screenplayBlock') {
+            const blockPos = $from.before(d);
+            const currentType = node.attrs.elementType as ElementType;
+            const prevType = reverseCycleElementType(currentType);
+            view.dispatch(
+              state.tr.setNodeMarkup(blockPos, undefined, {
+                ...node.attrs,
+                elementType: prevType,
+              }),
+            );
+            return true;
+          }
+        }
+        return false;
+      },
+
       Tab: ({ editor }) => {
         const { state, view } = editor;
         const { $from } = state.selection;
