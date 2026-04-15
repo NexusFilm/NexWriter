@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { useMoodBoardStore } from '@/stores/moodBoardStore';
+import { DashboardToolbar } from '@/components/dashboard/DashboardToolbar';
 import { MoodBoardRepository } from '@/repositories/MoodBoardRepository';
 import { TMDBService } from '@/services/TMDBService';
 import type { MoodBoardImage } from '@/types/productionTools';
@@ -75,14 +76,20 @@ export function MoodBoardDetailPage() {
   );
 
   if (loading) {
-    return <div className={styles.loading}>Loading board…</div>;
+    return (
+      <div className={styles.page}>
+        <DashboardToolbar />
+        <div className={styles.loading}>Loading board…</div>
+      </div>
+    );
   }
 
   if (!currentBoard) {
     return (
       <div className={styles.page}>
+        <DashboardToolbar />
         <div className={styles.header}>
-          <Link to="/moodboard" className={styles.backLink}>← Back to Mood Boards</Link>
+          <Link to="/moodboard" className={styles.backLink}>Back to Mood Boards</Link>
         </div>
         <div className={styles.empty}>
           <p>Board not found.</p>
@@ -93,9 +100,13 @@ export function MoodBoardDetailPage() {
 
   return (
     <div className={styles.page}>
+      <DashboardToolbar />
       <div className={styles.header}>
-        <Link to="/moodboard" className={styles.backLink}>← Back to Mood Boards</Link>
-        <h1 className={styles.title}>{currentBoard.name}</h1>
+        <div>
+          <Link to="/moodboard" className={styles.backLink}>Back to Mood Boards</Link>
+          <h1 className={styles.title}>{currentBoard.name}</h1>
+        </div>
+        <span className={styles.imageCount}>{images.length} saved</span>
       </div>
 
       {error && <div className={styles.error}>{error}</div>}

@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -29,10 +29,12 @@ const DEFAULT_CONTENT: TipTapDocJSON = {
   ],
 };
 
+let latestCharacterNames: string[] = [];
+
 export function ScreenplayEditor({ content, onUpdate, onEditorReady, onSelectionUpdate, characterNames = [] }: ScreenplayEditorProps) {
-  // Keep a stable ref to characterNames so the extension always reads the latest
-  const characterNamesRef = useMemo(() => ({ current: characterNames }), []);
-  characterNamesRef.current = characterNames;
+  useEffect(() => {
+    latestCharacterNames = characterNames;
+  }, [characterNames]);
 
   const editor = useEditor({
     extensions: [
@@ -46,12 +48,13 @@ export function ScreenplayEditor({ content, onUpdate, onEditorReady, onSelection
         codeBlock: false,
         horizontalRule: false,
         hardBreak: false,
+        underline: false,
       }),
       ScreenplayBlock,
       Underline,
       KeyboardPlugin,
       AutocompleteExtension.configure({
-        getCharacterNames: () => characterNamesRef.current,
+        getCharacterNames: () => latestCharacterNames,
       }),
     ],
     editable: true,

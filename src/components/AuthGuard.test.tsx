@@ -15,7 +15,7 @@ function renderWithRouter(initialRoute = '/') {
   return render(
     <MemoryRouter initialEntries={[initialRoute]}>
       <Routes>
-        <Route path="/login" element={<div>LoginPage</div>} />
+        <Route path="/welcome" element={<div>LandingPage</div>} />
         <Route path="/" element={<AuthGuard />}>
           <Route index element={<div>DashboardPage</div>} />
         </Route>
@@ -32,11 +32,11 @@ describe('AuthGuard', () => {
     expect(screen.getByText('Loading…')).toBeInTheDocument();
   });
 
-  it('redirects to /login when no user is authenticated', () => {
+  it('redirects to /welcome when no user is authenticated', () => {
     mockUser = null;
     mockLoading = false;
     renderWithRouter();
-    expect(screen.getByText('LoginPage')).toBeInTheDocument();
+    expect(screen.getByText('LandingPage')).toBeInTheDocument();
   });
 
   it('renders child routes when user is authenticated', () => {

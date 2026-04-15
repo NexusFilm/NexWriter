@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthGuard } from '@/components/AuthGuard';
 import { AdminGuard } from '@/components/AdminGuard';
 import { FeatureGate } from '@/components/FeatureGate';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
+import { LandingPage } from '@/pages/LandingPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { SignupPage } from '@/pages/SignupPage';
 import { DashboardPage } from '@/pages/DashboardPage';
@@ -33,14 +34,14 @@ const featureGateService = new FeatureGateService();
 
 function App() {
   const flagsLoaded = useFeatureFlagStore((s) => s.loaded);
-  const [initStarted, setInitStarted] = useState(false);
+  const initStarted = useRef(false);
 
   useEffect(() => {
-    if (!initStarted) {
-      setInitStarted(true);
+    if (!initStarted.current) {
+      initStarted.current = true;
       featureGateService.initialize();
     }
-  }, [initStarted]);
+  }, []);
 
   if (!flagsLoaded) {
     return (
@@ -54,6 +55,7 @@ function App() {
     <BrowserRouter>
       <PaywallModal />
       <Routes>
+        <Route path="/welcome" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/" element={<AuthGuard />}>

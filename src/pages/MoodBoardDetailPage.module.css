@@ -1,27 +1,38 @@
-/* MoodBoardDetailPage — CSS Module */
+/* MoodBoardDetailPage */
 
 .page {
   min-height: 100vh;
-  background-color: var(--color-dashboard-bg);
-  padding-top: calc(var(--navbar-height) + var(--space-8));
-  padding-left: var(--space-10);
-  padding-right: var(--space-10);
-  padding-bottom: var(--space-12);
+  padding: calc(var(--navbar-height) + var(--space-10)) var(--space-10) var(--space-12);
+  background:
+    radial-gradient(circle at 14% 4%, rgba(244, 196, 48, 0.14), transparent 24rem),
+    linear-gradient(135deg, #f8fbff 0%, #edf5ff 48%, #e6f0ff 100%);
+  color: var(--color-text-primary);
   font-family: var(--font-ui);
 }
 
 .header {
+  width: min(100%, 1480px);
+  margin: 0 auto var(--space-8);
   display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6);
 }
 
 .backLink {
-  color: var(--color-text-secondary);
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  margin-bottom: var(--space-2);
+  color: var(--color-accent-hover);
   text-decoration: none;
   font-size: var(--text-sm);
-  transition: color var(--transition-fast);
+  font-weight: 800;
+}
+
+.backLink::before {
+  content: '←';
+  margin-right: var(--space-2);
 }
 
 .backLink:hover {
@@ -29,9 +40,25 @@
 }
 
 .title {
-  font-size: var(--text-2xl);
-  font-weight: 700;
+  margin: 0;
   color: var(--color-text-primary);
+  font-size: 40px;
+  line-height: 1.05;
+  font-weight: 850;
+  letter-spacing: 0;
+}
+
+.imageCount {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius);
+  background: var(--color-action);
+  color: var(--color-action-text);
+  font-size: var(--text-sm);
+  font-weight: 900;
+  white-space: nowrap;
 }
 
 .loading {
@@ -44,45 +71,60 @@
 }
 
 .error {
-  margin-top: var(--space-6);
-  padding: var(--space-4) var(--space-6);
-  color: var(--color-danger);
+  width: min(100%, 1480px);
+  margin: 0 auto var(--space-6);
+  padding: var(--space-4) var(--space-5);
+  color: #9b1c1c;
   background-color: var(--color-danger-bg);
   border: 1px solid var(--color-danger-border);
   border-radius: var(--radius);
   font-size: var(--text-base);
-  text-align: center;
 }
 
 .empty {
+  width: min(100%, 1480px);
+  min-height: 360px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: var(--space-4);
-  min-height: 30vh;
-  text-align: center;
+  padding: var(--space-8);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(145, 172, 210, 0.36);
+  border-left: 5px solid var(--color-action);
+  border-radius: var(--radius);
   color: var(--color-text-secondary);
+  font-size: var(--text-base);
+  line-height: 1.6;
 }
 
-/* Saved image grid */
 .imageGrid {
+  width: min(100%, 1480px);
+  margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--space-4);
 }
 
 .imageCard {
   position: relative;
-  border-radius: var(--radius);
   overflow: hidden;
-  background: #ffffff;
-  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-panel);
+  box-shadow: var(--shadow-sm);
+}
+
+.imageCard:hover,
+.imageCard:focus-within {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .imageThumb {
   width: 100%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
   display: block;
 }
@@ -90,80 +132,93 @@
 .imageHover {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.65);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  gap: var(--space-2);
   padding: var(--space-3);
+  background: linear-gradient(180deg, transparent 12%, rgba(7, 22, 46, 0.88) 100%);
   opacity: 0;
   transition: opacity var(--transition-fast);
 }
 
-.imageCard:hover .imageHover {
+.imageCard:hover .imageHover,
+.imageCard:focus-within .imageHover {
   opacity: 1;
 }
 
-.noteInput {
-  width: 100%;
-  padding: var(--space-2);
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: var(--radius);
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  font-size: var(--text-xs);
-  margin-bottom: var(--space-2);
-  resize: none;
-}
-
-.noteInput::placeholder {
-  color: rgba(255,255,255,0.5);
-}
-
+.noteInput,
 .tagsInput {
   width: 100%;
   padding: var(--space-2);
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: var(--radius);
-  background: rgba(255,255,255,0.1);
-  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
   font-size: var(--text-xs);
 }
 
+.noteInput {
+  resize: none;
+}
+
+.noteInput::placeholder,
 .tagsInput::placeholder {
-  color: rgba(255,255,255,0.5);
+  color: rgba(255, 255, 255, 0.66);
 }
 
 .deleteBtn {
   position: absolute;
   top: var(--space-2);
   right: var(--space-2);
-  padding: var(--space-1) var(--space-2);
-  background: var(--color-danger);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius);
+  min-width: 34px;
+  min-height: 34px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: rgba(155, 28, 28, 0.92);
+  color: #ffffff;
   font-size: var(--text-xs);
-  cursor: pointer;
+  font-weight: 900;
   opacity: 0;
-  transition: opacity var(--transition-fast);
+  transition: opacity var(--transition-fast), background-color var(--transition-fast);
 }
 
-.imageCard:hover .deleteBtn {
+.deleteBtn:hover {
+  background: #b91c1c;
+}
+
+.imageCard:hover .deleteBtn,
+.imageCard:focus-within .deleteBtn {
   opacity: 1;
 }
 
 @media (max-width: 767px) {
   .page {
-    padding-left: var(--space-4);
-    padding-right: var(--space-4);
-    padding-bottom: 72px;
+    padding: calc(var(--navbar-height) + var(--space-6)) var(--space-4) 88px;
+  }
+
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+  }
+
+  .title {
+    font-size: 30px;
   }
 
   .imageGrid {
     grid-template-columns: 1fr;
   }
 
-  .title {
-    font-size: var(--text-xl);
+  .empty {
+    min-height: 280px;
+    padding: var(--space-5);
+  }
+
+  .imageHover,
+  .deleteBtn {
+    opacity: 1;
   }
 }

@@ -1,4 +1,4 @@
-/* Global Styles — DraftKit Screenwriter (warm light mode) */
+/* Global Styles — NexWriter */
 
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
 @import './tokens.css';
@@ -20,7 +20,9 @@ body {
   font-size: var(--text-lg);
   line-height: 1.5;
   color: var(--color-text-primary);
-  background-color: var(--color-editor-bg);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(244, 196, 48, 0.12), transparent 26rem),
+    linear-gradient(180deg, #f8fbff 0%, var(--color-editor-bg) 42%, #eef5ff 100%);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -40,7 +42,7 @@ button {
   font-family: var(--font-ui);
   border-radius: var(--radius);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition: background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), transform var(--transition-fast), box-shadow var(--transition-base);
 }
 
 input,
@@ -97,9 +99,9 @@ a:focus-visible {
   background: var(--color-border-hover);
 }
 
-/* Selection — warm gold */
+/* Selection */
 ::selection {
-  background-color: rgba(196, 132, 29, 0.15);
+  background-color: rgba(244, 196, 48, 0.28);
   color: inherit;
 }
 

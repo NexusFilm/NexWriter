@@ -6,11 +6,11 @@ import { supabase, hasSupabase } from '@/lib/supabase';
 import styles from './DashboardToolbar.module.css';
 
 interface DashboardToolbarProps {
-  onNewScript: () => void;
-  creating: boolean;
+  onNewScript?: () => void;
+  creating?: boolean;
 }
 
-export function DashboardToolbar({ onNewScript, creating }: DashboardToolbarProps) {
+export function DashboardToolbar({ onNewScript, creating = false }: DashboardToolbarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
@@ -20,16 +20,39 @@ export function DashboardToolbar({ onNewScript, creating }: DashboardToolbarProp
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!user) { setShowAdmin(false); return; }
+    let cancelled = false;
     const adminEmails = import.meta.env.VITE_ADMIN_EMAILS as string | undefined;
-    if (isAdmin(user.email, null, adminEmails)) { setShowAdmin(true); return; }
-    if (!hasSupabase) { setShowAdmin(false); return; }
-    supabase
-      .from('sw_user_profiles').select('role').eq('id', user.id).maybeSingle()
-      .then(
-        ({ data }) => setShowAdmin(isAdmin(user.email, data?.role ?? null, adminEmails)),
-        () => setShowAdmin(false),
-      );
+
+    Promise.resolve().then(async () => {
+      if (!user) {
+        if (!cancelled) setShowAdmin(false);
+        return;
+      }
+
+      if (isAdmin(user.email, null, adminEmails)) {
+        if (!cancelled) setShowAdmin(true);
+        return;
+      }
+
+      if (!hasSupabase) {
+        if (!cancelled) setShowAdmin(false);
+        return;
+      }
+
+      try {
+        const { data } = await supabase
+          .from('sw_user_profiles')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (!cancelled) setShowAdmin(isAdmin(user.email, data?.role ?? null, adminEmails));
+      } catch {
+        if (!cancelled) setShowAdmin(false);
+      }
+    });
+
+    return () => { cancelled = true; };
   }, [user]);
 
   // Close menu when clicking outside
@@ -49,37 +72,49 @@ export function DashboardToolbar({ onNewScript, creating }: DashboardToolbarProp
 
   const userInitial = user?.email ? user.email[0].toUpperCase() : 'U';
 
+  const isActive = useCallback(
+    (path: string) => (path === '/' ? location.pathname === '/' : location.pathname.startsWith(path)),
+    [location.pathname],
+  );
+
+  const navClass = useCallback(
+    (path: string) => (isActive(path) ? styles.navLinkActive : styles.navLink),
+    [isActive],
+  );
+
   const bottomNavItems = [
-    { to: '/', icon: '📄', label: 'Scripts' },
-    { to: '/moodboard', icon: '🎬', label: 'Mood Board' },
-    { to: '/agreements', icon: '📋', label: 'Agreements' },
-    { to: '/learn', icon: '📚', label: 'Learn' },
-    { to: '/settings', icon: '⚙️', label: 'Settings' },
+    { to: '/', icon: 'S', label: 'Scripts' },
+    { to: '/moodboard', icon: 'M', label: 'Mood' },
+    { to: '/agreements', icon: 'A', label: 'Agreements' },
+    { to: '/learn', icon: 'L', label: 'Learn' },
+    { to: '/settings', icon: 'U', label: 'You' },
   ];
 
   return (
     <>
       <div className={styles.toolbar}>
-        <span className={styles.logo}>
-          Draft<span className={styles.logoAccent}>Kit</span>
-        </span>
+        <Link to="/" className={styles.logo} aria-label="NexWriter dashboard">
+          Nex<span className={styles.logoAccent}>Writer</span>
+        </Link>
         <nav className={styles.nav}>
-          <Link to="/" className={location.pathname === '/' ? styles.navLinkActive : styles.navLink}>
+          <Link to="/" className={navClass('/')}>
             Dashboard
           </Link>
-          <Link to="/moodboard" className={styles.navLink}>Mood Board</Link>
-          <Link to="/agreements" className={styles.navLink}>Agreements</Link>
-          <Link to="/learn" className={styles.navLink}>Learn</Link>
+          <Link to="/moodboard" className={navClass('/moodboard')}>Mood Board</Link>
+          <Link to="/agreements" className={navClass('/agreements')}>Agreements</Link>
+          <Link to="/learn" className={navClass('/learn')}>Learn</Link>
         </nav>
         <div className={styles.actions}>
-          <button
-            className={styles.newScriptBtn}
-            onClick={onNewScript}
-            disabled={creating}
-            aria-label="Create new script"
-          >
-            + New Script
-          </button>
+          {onNewScript && (
+            <button
+              className={styles.newScriptBtn}
+              onClick={onNewScript}
+              disabled={creating}
+              aria-label="Create new script"
+            >
+              New Script
+            </button>
+          )}
 
           {/* User avatar with dropdown menu */}
           <div className={styles.avatarWrap} ref={menuRef}>
@@ -123,7 +158,7 @@ export function DashboardToolbar({ onNewScript, creating }: DashboardToolbarProp
           <Link
             key={item.to}
             to={item.to}
-            className={location.pathname === item.to ? styles.bottomNavLinkActive : styles.bottomNavLink}
+            className={isActive(item.to) ? styles.bottomNavLinkActive : styles.bottomNavLink}
           >
             <span className={styles.bottomNavIcon}>{item.icon}</span>
             {item.label}
