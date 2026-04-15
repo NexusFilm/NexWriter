@@ -30,7 +30,7 @@ export function EmailPasswordForm({ mode, onSubmit }: EmailPasswordFormProps) {
     }
   };
 
-  const buttonLabel = mode === 'login' ? 'Sign In' : 'Create Account';
+  const buttonLabel = mode === 'login' ? 'Sign in' : 'Create account';
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -78,7 +78,8 @@ export function EmailPasswordForm({ mode, onSubmit }: EmailPasswordFormProps) {
         type="submit"
         disabled={loading}
       >
-        {loading ? 'Please wait…' : buttonLabel}
+        <span>{loading ? 'Please wait' : buttonLabel}</span>
+        <span className={styles.buttonArrow} aria-hidden="true">→</span>
       </button>
     </form>
   );

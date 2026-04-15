@@ -1,4 +1,4 @@
-/* SocialLoginButtons — CSS Module using design tokens */
+/* SocialLoginButtons */
 
 .container {
   display: flex;
@@ -13,8 +13,8 @@
   gap: var(--space-4);
   color: var(--color-text-tertiary);
   font-size: var(--text-sm);
-  text-transform: lowercase;
-  letter-spacing: 0.05em;
+  font-weight: 800;
+  letter-spacing: 0;
 }
 
 .divider::before,
@@ -22,33 +22,37 @@
   content: '';
   flex: 1;
   height: 1px;
-  background-color: var(--color-border);
+  background-color: rgba(145, 172, 210, 0.5);
 }
 
 .socialButton {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-3);
-  height: 44px;
+  height: 48px;
   padding: 0 var(--space-4);
   font-size: var(--text-base);
-  font-weight: 500;
+  font-weight: 800;
   color: var(--color-text-primary);
-  background-color: #ffffff;
-  border: 1px solid var(--color-border);
+  background-color: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(145, 172, 210, 0.5);
   border-radius: var(--radius);
   cursor: pointer;
-  transition: border-color var(--transition-base), background-color var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-base), background-color var(--transition-base), transform var(--transition-fast), box-shadow var(--transition-base);
 }
 
 .socialButton:hover {
-  border-color: var(--color-border-hover);
-  background-color: var(--color-surface-raised);
+  border-color: rgba(11, 92, 173, 0.34);
+  background-color: #ffffff;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .socialButton:active {
-  transform: scale(0.98);
+  transform: translateY(1px);
 }
 
 .socialButton:disabled {
@@ -60,4 +64,10 @@
   width: 20px;
   height: 20px;
   flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .socialButton {
+    transition: none;
+  }
 }

@@ -229,6 +229,7 @@ export interface IAdminRepository {
 
 export interface ITMDBService {
   searchMovies(query: string, options?: { genre?: number; yearStart?: number; yearEnd?: number }): Promise<MovieSearchResult[]>;
+  getTrendingMovies(): Promise<MovieSearchResult[]>;
   getMovieImages(movieId: number): Promise<TMDBImage[]>;
   getImageUrl(path: string, size?: 'w200' | 'w500' | 'original'): string;
 }

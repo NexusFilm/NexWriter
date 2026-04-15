@@ -4,6 +4,25 @@ import { isAccountLocked } from '@/services/lockedAccount';
 import type { User, Session } from '@/types/auth';
 import type { IAuthRepository } from '@/types/repositories';
 
+const DEFAULT_SITE_URL = 'https://nexwriter.vercel.app';
+
+function normalizeRedirectUrl(url: string): string {
+  return `${url.replace(/\/+$/, '')}/`;
+}
+
+function isLocalOrigin(origin: string): boolean {
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+}
+
+function getOAuthRedirectUrl(): string {
+  if (isLocalOrigin(window.location.origin)) {
+    return normalizeRedirectUrl(window.location.origin);
+  }
+
+  const configuredSiteUrl = (import.meta.env.VITE_SITE_URL as string | undefined)?.trim();
+  return normalizeRedirectUrl(configuredSiteUrl || DEFAULT_SITE_URL);
+}
+
 export class AuthRepository implements IAuthRepository {
   async signUp(email: string, password: string): Promise<User> {
     const { data, error } = await supabase.auth.signUp({ email, password });
@@ -73,7 +92,7 @@ export class AuthRepository implements IAuthRepository {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: getOAuthRedirectUrl(),
       },
     });
 

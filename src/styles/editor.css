@@ -35,7 +35,7 @@
   font-style: italic;
 }
 
-/* Screenplay element styles for warm white page */
+/* Screenplay element styles */
 .ProseMirror .el-scene-heading {
   text-transform: uppercase;
   font-weight: bold;
@@ -68,7 +68,7 @@
 
 .ProseMirror .el-parenthetical {
   margin: 0 30% 0 28%;
-  color: #6B6560;
+  color: #435a78;
   font-style: italic;
   margin-top: 0.1em;
 }
@@ -87,9 +87,9 @@
   margin-bottom: 1em;
 }
 
-/* Selection styling inside the editor — warm gold */
+/* Selection styling inside the editor */
 .ProseMirror ::selection {
-  background-color: rgba(196, 132, 29, 0.15);
+  background-color: rgba(244, 196, 48, 0.28);
 }
 
 

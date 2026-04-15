@@ -147,6 +147,33 @@ export class TMDBService implements ITMDBService {
     return movies;
   }
 
+  async getTrendingMovies(): Promise<MovieSearchResult[]> {
+    const params = new URLSearchParams({ api_key: this.apiKey });
+
+    let res: Response;
+    try {
+      res = await fetch(`${TMDB_BASE_URL}/trending/movie/week?${params}`);
+    } catch (err) {
+      throw new AppError(
+        `Network error fetching TMDB trending movies: ${err instanceof Error ? err.message : String(err)}`,
+        'TMDB_SEARCH_FAILED',
+        'Could not load featured movies. Check your connection and try again.',
+        true,
+      );
+    }
+
+    if (!res.ok) {
+      await handleResponseError(res);
+    }
+
+    const data = await res.json();
+    const results: unknown[] = data.results ?? [];
+    return results
+      .map((r) => mapMovieResult(r as Record<string, unknown>))
+      .filter((movie) => movie.posterPath !== null)
+      .slice(0, 12);
+  }
+
   async getMovieImages(movieId: number): Promise<TMDBImage[]> {
     const params = new URLSearchParams({ api_key: this.apiKey });
 

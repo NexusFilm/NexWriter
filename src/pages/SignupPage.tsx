@@ -20,22 +20,37 @@ export function SignupPage() {
 
   return (
     <main className={styles.page}>
-      <div className={styles.card}>
+      <section className={styles.story}>
+        <Link to="/welcome" className={styles.logo} aria-label="NexWriter home">
+          Nex<span className={styles.logoAccent}>Writer</span>
+        </Link>
+        <div className={styles.storyCopy}>
+          <span className={styles.eyebrow}>Start clean</span>
+          <h2>One place for the script and the shoot.</h2>
+          <p>Build the draft, boards, shot lists, and agreements around the same creative source.</p>
+        </div>
+        <img
+          className={styles.authImage}
+          src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=82"
+          alt="A focused writing desk"
+        />
+      </section>
+
+      <section className={styles.panel} aria-label="Create account">
         <div className={styles.brand}>
-          <span className={styles.logo}>
-            Draft<span className={styles.logoAccent}>Kit</span>
-          </span>
+          <span className={styles.panelKicker}>NexWriter account</span>
           <h1 className={styles.title}>Create your account</h1>
+          <p className={styles.subtitle}>Start with a focused workspace built for screenwriters.</p>
         </div>
         <EmailPasswordForm mode="signup" onSubmit={handleEmailSignup} />
         <SocialLoginButtons onProviderLogin={handleProviderLogin} />
         <p className={styles.footer}>
-          Already have an account?{' '}
+          Already writing here?{' '}
           <Link className={styles.footerLink} to="/login">
             Sign in
           </Link>
         </p>
-      </div>
+      </section>
     </main>
   );
 }
