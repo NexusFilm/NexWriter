@@ -31,7 +31,7 @@
   min-height: calc(680px * 1.294);
   background-color: var(--color-page);
   color: var(--color-text-primary);
-  border-radius: 2px;
+  border-radius: var(--radius-lg);
   box-shadow:
     0 1px 4px rgba(0, 0, 0, 0.06),
     0 6px 24px rgba(0, 0, 0, 0.06),
@@ -47,12 +47,33 @@
   width: var(--sidebar-width);
   flex-shrink: 0;
   background-color: var(--color-surface);
-  border-left: 1px solid var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  margin: var(--space-4) var(--space-4) var(--space-4) 0;
   overflow-y: auto;
   padding: var(--space-5);
   color: var(--color-text-secondary);
   font-size: var(--text-base);
-  animation: slideIn var(--transition-slow) ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.sidePanelHidden {
+  composes: sidePanel;
+}
+
+/* On desktop, always show the side panel */
+@media (min-width: 1024px) {
+  .sidePanelHidden {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* On mobile/tablet, hide unless toggled */
+@media (max-width: 1023px) {
+  .sidePanelHidden {
+    display: none;
+  }
 }
 
 @keyframes slideIn {
@@ -106,8 +127,10 @@
     inset: 0;
     z-index: 200;
     width: 100%;
+    margin: 0;
+    border-radius: 0;
+    border: none;
     background-color: var(--color-surface);
-    border-left: none;
     padding: var(--space-5);
     animation: none;
   }

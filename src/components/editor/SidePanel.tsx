@@ -3,7 +3,6 @@ import { CharacterTracker } from './CharacterTracker';
 import { BeatSheetOverlay } from './BeatSheetOverlay';
 import type { ParsedScene } from '@/services/SceneParser';
 import type { ParsedCharacter } from '@/services/CharacterParser';
-import type { Tier } from '@/types/subscription';
 import styles from './SidePanel.module.css';
 
 type PanelTab = 'scenes' | 'characters' | 'beats';
@@ -13,10 +12,8 @@ interface SidePanelProps {
   onTabChange: (tab: PanelTab) => void;
   scenes: ParsedScene[];
   characters: ParsedCharacter[];
-  tier: Tier;
   onSceneClick: (elementId: string) => void;
   onCharacterClick: (elementId: string) => void;
-  onPaywallRequest: () => void;
   onClose?: () => void;
 }
 
@@ -33,10 +30,8 @@ export function SidePanel({
   onTabChange,
   scenes,
   characters,
-  tier,
   onSceneClick,
   onCharacterClick,
-  onPaywallRequest,
   onClose,
 }: SidePanelProps) {
   return (
@@ -73,7 +68,7 @@ export function SidePanel({
           <CharacterTracker characters={characters} onCharacterClick={onCharacterClick} />
         )}
         {activeTab === 'beats' && (
-          <BeatSheetOverlay tier={tier} onPaywallRequest={onPaywallRequest} />
+          <BeatSheetOverlay />
         )}
       </div>
     </div>

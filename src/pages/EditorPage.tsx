@@ -29,10 +29,8 @@ export function EditorPage() {
   const activePanelTab = useEditorStore((s) => s.activePanelTab);
   const setElements = useEditorStore((s) => s.setElements);
   const setSaveStatus = useEditorStore((s) => s.setSaveStatus);
-  const tier = useAuthStore((s) => s.tier);
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
-  const showPaywallModal = useUIStore((s) => s.showPaywallModal);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -230,21 +228,18 @@ export function EditorPage() {
             />
           </div>
         </div>
-        {sidebarOpen && (
-          <div className={styles.sidePanel}>
-            <SidePanel
-              activeTab={currentTab}
-              onTabChange={handleTabChange}
-              scenes={scenes}
-              characters={characters}
-              tier={tier}
-              onSceneClick={handleElementScroll}
-              onCharacterClick={handleElementScroll}
-              onPaywallRequest={showPaywallModal}
-              onClose={toggleSidebar}
-            />
-          </div>
-        )}
+        {/* Side panel — always visible on desktop, toggle on mobile */}
+        <div className={sidebarOpen ? styles.sidePanel : styles.sidePanelHidden}>
+          <SidePanel
+            activeTab={currentTab}
+            onTabChange={handleTabChange}
+            scenes={scenes}
+            characters={characters}
+            onSceneClick={handleElementScroll}
+            onCharacterClick={handleElementScroll}
+            onClose={toggleSidebar}
+          />
+        </div>
       </div>
     </div>
   );
