@@ -91,3 +91,19 @@
 .ProseMirror ::selection {
   background-color: rgba(232, 164, 39, 0.25);
 }
+
+
+/* ── Mobile screenplay adjustments ── */
+@media (max-width: 767px) {
+  .ProseMirror .el-character {
+    margin-left: 20%;
+  }
+
+  .ProseMirror .el-dialogue {
+    margin: 0.15em 10% 0 10%;
+  }
+
+  .ProseMirror .el-parenthetical {
+    margin: 0.1em 15% 0 15%;
+  }
+}

@@ -85,3 +85,48 @@
   font-size: var(--text-base);
   background-color: var(--color-editor-bg);
 }
+
+/* ── Mobile ── */
+@media (max-width: 767px) {
+  .editorPane {
+    padding: var(--space-4) 0;
+    padding-bottom: 64px; /* space for bottom element bar */
+  }
+
+  .editorInner {
+    max-width: 100%;
+    min-height: auto;
+    border-radius: 0;
+    box-shadow: none;
+    padding: var(--space-4) var(--space-4) var(--space-4) var(--space-4);
+  }
+
+  .sidePanel {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    width: 100%;
+    background-color: var(--color-surface);
+    border-left: none;
+    padding: var(--space-5);
+    animation: none;
+  }
+}
+
+/* ── Tablet ── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .editorInner {
+    max-width: 600px;
+  }
+
+  .sidePanel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+    width: var(--sidebar-width);
+    box-shadow: var(--shadow-lg);
+    animation: none;
+  }
+}

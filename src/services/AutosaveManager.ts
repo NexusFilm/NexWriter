@@ -150,8 +150,6 @@ export class AutosaveManager implements IAutosaveManager {
 
   private async cloudSync(): Promise<void> {
     if (!this.scriptId) return;
-    const tier = this.getTier();
-    if (tier === 'free') return;
 
     const elements = this.lastSavedElements ?? this.pendingElements;
     if (!elements) return;

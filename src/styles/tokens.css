@@ -64,4 +64,9 @@
   /* Layout */
   --navbar-height: 56px;
   --sidebar-width: 300px;
+
+  /* Breakpoints (use in @media queries) */
+  /* Mobile: max-width 767px */
+  /* Tablet: 768px - 1023px */
+  /* Desktop: 1024px+ */
 }

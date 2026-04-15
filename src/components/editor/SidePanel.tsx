@@ -17,6 +17,7 @@ interface SidePanelProps {
   onSceneClick: (elementId: string) => void;
   onCharacterClick: (elementId: string) => void;
   onPaywallRequest: () => void;
+  onClose?: () => void;
 }
 
 const TAB_LABELS: Record<PanelTab, string> = {
@@ -36,9 +37,20 @@ export function SidePanel({
   onSceneClick,
   onCharacterClick,
   onPaywallRequest,
+  onClose,
 }: SidePanelProps) {
   return (
     <div className={styles.container}>
+      {onClose && (
+        <button
+          className={styles.closeBtn}
+          onClick={onClose}
+          type="button"
+          aria-label="Close panel"
+        >
+          ✕
+        </button>
+      )}
       <div className={styles.tabs} role="tablist">
         {TABS.map((tab) => (
           <button

@@ -102,3 +102,22 @@ a:focus-visible {
   background-color: var(--color-accent-muted);
   color: var(--color-text-primary);
 }
+
+/* ── Mobile base styles ── */
+html {
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent auto-zoom on input focus (iOS) — min 16px */
+@media (max-width: 767px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}

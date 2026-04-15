@@ -224,6 +224,7 @@ export function EditorPage() {
               onSceneClick={handleElementScroll}
               onCharacterClick={handleElementScroll}
               onPaywallRequest={showPaywallModal}
+              onClose={toggleSidebar}
             />
           </div>
         )}

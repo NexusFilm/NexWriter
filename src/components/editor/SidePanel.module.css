@@ -44,3 +44,41 @@
   flex: 1;
   overflow-y: auto;
 }
+
+/* ── Mobile: full-screen overlay ── */
+@media (max-width: 767px) {
+  .container {
+    padding-top: var(--space-4);
+  }
+
+  .closeBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+    font-size: var(--text-xl);
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .closeBtn:hover {
+    color: var(--color-text-primary);
+    background-color: var(--color-surface-raised);
+  }
+}
+
+/* Hide close button on desktop (it doesn't exist in the DOM by default,
+   but this ensures safety if conditionally rendered) */
+@media (min-width: 768px) {
+  .closeBtn {
+    display: none;
+  }
+}

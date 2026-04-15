@@ -171,13 +171,35 @@
   margin-top: 16px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 767px) {
+  .overlay {
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
+  .modal {
+    max-width: none;
+    max-height: none;
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    padding: var(--space-6) var(--space-4);
+  }
+
   .tierGrid {
     grid-template-columns: 1fr;
   }
 
-  .modal {
-    margin: 16px;
-    padding: 24px 16px;
+  .heading {
+    font-size: var(--text-xl);
+  }
+
+  .subheading {
+    margin-bottom: var(--space-5);
+  }
+
+  .tierCard,
+  .tierCardHighlighted {
+    padding: var(--space-4) var(--space-4);
   }
 }

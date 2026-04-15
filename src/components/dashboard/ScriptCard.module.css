@@ -210,3 +210,33 @@
 .confirmCancelBtn:hover {
   background-color: var(--color-border);
 }
+
+/* ── Mobile ── */
+@media (max-width: 767px) {
+  .card {
+    border-radius: var(--radius);
+  }
+
+  .card:hover {
+    transform: none; /* no hover lift on touch */
+  }
+
+  .thumbnail {
+    display: none;
+  }
+
+  .cardBody {
+    padding: var(--space-3);
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .header {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .meta {
+    font-size: var(--text-xs);
+  }
+}
