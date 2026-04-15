@@ -7,7 +7,7 @@
   gap: var(--space-4);
   padding: var(--space-4) var(--space-5);
   margin-bottom: var(--space-6);
-  background-color: var(--color-surface);
+  background-color: #ffffff;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   flex-wrap: wrap;
@@ -21,7 +21,7 @@
   padding: 0 var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  background-color: var(--color-surface-raised, #f8f8f6);
+  background-color: var(--color-surface-raised);
   color: var(--color-text-primary);
   font-size: var(--text-sm);
   font-weight: 500;
@@ -46,7 +46,7 @@
   padding: 0 var(--space-5);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  background-color: var(--color-surface);
+  background-color: #ffffff;
   color: var(--color-text-primary);
   font-size: var(--text-sm);
   font-weight: 600;
@@ -57,7 +57,7 @@
 
 .toolbarBtn:hover {
   background-color: var(--color-surface-raised);
-  border-color: var(--color-text-secondary);
+  border-color: var(--color-border-hover);
 }
 
 .toolbarBtnPrimary {
@@ -72,12 +72,12 @@
   font-family: var(--font-ui);
   cursor: pointer;
   transition: all var(--transition-fast);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .toolbarBtnPrimary:hover {
   background-color: var(--color-accent-hover);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 
@@ -94,7 +94,7 @@
   padding: 0 var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  background-color: var(--color-surface-raised, #f8f8f6);
+  background-color: var(--color-surface-raised);
   color: var(--color-text-primary);
   font-size: var(--text-sm);
   font-family: var(--font-ui);
@@ -110,10 +110,10 @@
 .tableWrapper {
   display: block;
   overflow-x: auto;
-  background-color: var(--color-surface);
+  background-color: #ffffff;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
 }
 
 .table {
@@ -126,7 +126,7 @@
 .table th {
   text-align: left;
   padding: var(--space-3) var(--space-4);
-  background-color: var(--color-surface-raised, #f8f8f6);
+  background-color: var(--color-surface-raised);
   border-bottom: 2px solid var(--color-border);
   color: var(--color-text-secondary);
   font-weight: 700;
@@ -155,12 +155,12 @@
 }
 
 .tableRow:hover {
-  background-color: var(--color-accent-muted, rgba(170, 59, 255, 0.04));
+  background-color: var(--color-accent-muted);
 }
 
 .tableRowDragging {
   opacity: 0.5;
-  background-color: var(--color-accent-muted, rgba(170, 59, 255, 0.1));
+  background-color: var(--color-accent-muted);
 }
 
 .dragHandle {
@@ -192,14 +192,14 @@
 }
 
 .inlineInput:hover {
-  background-color: var(--color-surface-raised, #f8f8f6);
+  background-color: var(--color-surface-raised);
 }
 
 .inlineInput:focus {
   border-color: var(--color-accent);
   outline: none;
-  background-color: var(--color-surface);
-  box-shadow: 0 0 0 2px var(--color-accent-muted, rgba(170, 59, 255, 0.15));
+  background-color: #ffffff;
+  box-shadow: 0 0 0 2px var(--color-accent-muted);
 }
 
 .inlineInput::placeholder {
@@ -214,7 +214,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background-color: var(--color-accent-muted, rgba(170, 59, 255, 0.1));
+  background-color: var(--color-accent-muted);
   color: var(--color-accent);
   font-weight: 700;
   font-size: var(--text-sm);
@@ -233,7 +233,7 @@
 
 .deleteBtn:hover {
   color: var(--color-danger);
-  background-color: var(--color-danger-bg, rgba(239, 68, 68, 0.08));
+  background-color: var(--color-danger-bg);
 }
 
 /* ── ShotEntryCard (mobile) ── */
@@ -247,20 +247,20 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: var(--space-5);
-  background-color: var(--color-surface);
+  background-color: #ffffff;
   transition: all var(--transition-fast);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
 }
 
 .card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border-color: var(--color-accent-muted, rgba(170, 59, 255, 0.3));
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-accent-muted);
 }
 
 .cardDragging {
   opacity: 0.5;
   border-color: var(--color-accent);
-  box-shadow: 0 4px 16px rgba(170, 59, 255, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .cardHeader {
@@ -306,7 +306,7 @@
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  background-color: var(--color-surface-raised, #f8f8f6);
+  background-color: var(--color-surface-raised);
   color: var(--color-text-primary);
   font-size: var(--text-sm);
   font-family: var(--font-ui);
@@ -316,7 +316,7 @@
 .cardInput:focus {
   border-color: var(--color-accent);
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-accent-muted, rgba(170, 59, 255, 0.15));
+  box-shadow: 0 0 0 2px var(--color-accent-muted);
 }
 
 /* ── Image upload (kept for future use) ── */

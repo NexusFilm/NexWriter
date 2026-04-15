@@ -10,14 +10,14 @@
   align-items: center;
   height: var(--navbar-height);
   padding: 0 var(--space-8);
-  background-color: var(--color-surface);
+  background-color: #ffffff;
   border-bottom: 1px solid var(--color-border);
   font-family: var(--font-ui);
 }
 
 .logo {
   font-size: var(--text-xl);
-  font-weight: 700;
+  font-weight: 800;
   color: var(--color-text-primary);
   letter-spacing: -0.3px;
   flex-shrink: 0;
@@ -58,8 +58,8 @@
 
 .navLinkActive {
   composes: navLink;
-  color: var(--color-text-primary);
-  background-color: var(--color-surface-raised);
+  color: var(--color-accent);
+  background-color: var(--color-accent-muted);
 }
 
 .actions {
@@ -76,7 +76,7 @@
   height: 36px;
   padding: 0 var(--space-5);
   background-color: var(--color-accent);
-  color: var(--color-surface);
+  color: #ffffff;
   border: none;
   border-radius: var(--radius);
   font-size: var(--text-base);
@@ -103,12 +103,12 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background-color: var(--color-surface-raised);
+  background-color: var(--color-accent-muted);
   border: 1px solid var(--color-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-secondary);
+  color: var(--color-accent);
   font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
@@ -116,7 +116,7 @@
 }
 
 .userAvatar:hover {
-  border-color: var(--color-border-hover);
+  border-color: var(--color-accent);
 }
 
 .avatarWrap {
@@ -128,10 +128,10 @@
   top: calc(100% + 8px);
   right: 0;
   min-width: 200px;
-  background-color: var(--color-surface);
+  background-color: #ffffff;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
   z-index: 200;
   padding: var(--space-2) 0;
   display: flex;
@@ -169,7 +169,7 @@
   text-align: left;
   padding: var(--space-2) var(--space-4);
   font-size: var(--text-sm);
-  color: var(--color-danger, #ef4444);
+  color: var(--color-danger);
   background: none;
   border: none;
   border-top: 1px solid var(--color-border);
@@ -180,7 +180,7 @@
 }
 
 .menuItemDanger:hover {
-  background-color: var(--color-surface-raised);
+  background-color: var(--color-danger-bg);
 }
 
 /* ── Mobile ── */
@@ -229,7 +229,7 @@
     align-items: center;
     justify-content: space-around;
     height: 56px;
-    background-color: var(--color-surface);
+    background-color: #ffffff;
     border-top: 1px solid var(--color-border);
   }
 

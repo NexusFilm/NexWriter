@@ -26,7 +26,7 @@
 
 .title {
   font-size: var(--text-2xl);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-primary);
 }
 
@@ -42,7 +42,7 @@
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  background: var(--color-surface);
+  background: #ffffff;
   color: var(--color-text-primary);
   font-size: var(--text-base);
 }
@@ -53,13 +53,19 @@
 
 .searchBtn {
   padding: var(--space-3) var(--space-5);
-  background: var(--color-primary);
+  background: var(--color-accent);
   color: #fff;
   border: none;
   border-radius: var(--radius);
   font-size: var(--text-sm);
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  transition: background-color var(--transition-fast);
+}
+
+.searchBtn:hover {
+  background-color: var(--color-accent-hover);
 }
 
 .searchBtn:disabled {
@@ -79,13 +85,14 @@
   cursor: pointer;
   border-radius: var(--radius);
   overflow: hidden;
-  background: var(--color-surface);
+  background: #ffffff;
   border: 1px solid var(--color-border);
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .movieCard:hover {
-  border-color: var(--color-primary);
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-sm);
 }
 
 .moviePoster {
@@ -93,7 +100,7 @@
   aspect-ratio: 2/3;
   object-fit: cover;
   display: block;
-  background: var(--color-border);
+  background: var(--color-surface-raised);
 }
 
 .movieInfo {
@@ -120,12 +127,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-border);
+  background: var(--color-surface-raised);
   color: var(--color-text-secondary);
   font-size: var(--text-xs);
 }
 
-/* Movie image grid (stills + backdrops) */
+/* Movie image grid */
 .sectionTitle {
   font-size: var(--text-lg);
   font-weight: 600;
@@ -145,7 +152,7 @@
   cursor: pointer;
   border-radius: var(--radius);
   overflow: hidden;
-  background: var(--color-surface);
+  background: #ffffff;
   border: 1px solid var(--color-border);
 }
 
@@ -176,7 +183,7 @@
 
 .saveBtn {
   padding: var(--space-1) var(--space-3);
-  background: var(--color-primary);
+  background: var(--color-accent);
   color: #fff;
   border: none;
   border-radius: var(--radius);
@@ -223,7 +230,7 @@
   display: block;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius);
-  background: var(--color-surface);
+  background: #ffffff;
   border: 1px solid var(--color-border);
   color: var(--color-text-primary);
   text-decoration: none;
@@ -232,12 +239,12 @@
 }
 
 .boardItem:hover {
-  border-color: var(--color-primary);
+  border-color: var(--color-accent);
 }
 
 .boardItemActive {
-  border-color: var(--color-primary);
-  background: var(--color-primary-bg, var(--color-surface));
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
 }
 
 .newBoardRow {
@@ -250,14 +257,14 @@
   padding: var(--space-2);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  background: var(--color-surface);
+  background: #ffffff;
   color: var(--color-text-primary);
   font-size: var(--text-sm);
 }
 
 .newBoardBtn {
   padding: var(--space-2) var(--space-3);
-  background: var(--color-primary);
+  background: var(--color-accent);
   color: #fff;
   border: none;
   border-radius: var(--radius);
@@ -285,7 +292,7 @@
   text-align: center;
 }
 
-/* Responsive: single-column on mobile */
+/* Responsive */
 @media (max-width: 767px) {
   .page {
     flex-direction: column;

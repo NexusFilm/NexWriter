@@ -33,14 +33,15 @@
   padding: 14px;
   border-radius: var(--radius);
   border: 1px solid var(--color-border);
-  background: var(--color-surface);
+  background: #ffffff;
   cursor: pointer;
-  transition: border-color 0.12s ease, background-color 0.12s ease;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
   font-family: var(--font-ui);
 }
 
 .card:hover {
   border-color: var(--color-accent);
+  box-shadow: var(--shadow-sm);
 }
 
 .cardSelected {
@@ -64,7 +65,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--color-surface);
+  color: #ffffff;
   background: var(--color-accent);
   padding: 2px 6px;
   border-radius: 4px;
@@ -88,7 +89,7 @@
   padding: 14px;
   border-radius: var(--radius);
   border: 1px solid var(--color-border);
-  background: var(--color-surface);
+  background: #ffffff;
 }
 
 .detailName {

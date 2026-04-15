@@ -12,19 +12,19 @@
   font-size: 1.75rem;
   font-weight: 700;
   margin: 0 0 0.5rem;
-  color: var(--color-text, #1a1a1a);
+  color: var(--color-text-primary);
 }
 
 .featureName {
   font-size: 1.25rem;
   font-weight: 600;
   margin: 0 0 0.75rem;
-  color: var(--color-primary, #6366f1);
+  color: var(--color-accent);
 }
 
 .description {
   font-size: 1rem;
-  color: var(--color-text-secondary, #6b7280);
+  color: var(--color-text-secondary);
   max-width: 420px;
   margin: 0;
   line-height: 1.5;

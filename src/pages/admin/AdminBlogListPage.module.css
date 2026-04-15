@@ -12,14 +12,14 @@
 
 .title {
   font-size: var(--text-2xl);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-primary);
 }
 
 .newBtn {
   padding: var(--space-2) var(--space-6);
   background-color: var(--color-accent);
-  color: var(--color-surface);
+  color: #ffffff;
   border: none;
   border-radius: var(--radius);
   font-size: var(--text-sm);
@@ -35,7 +35,7 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  background-color: var(--color-surface);
+  background-color: #ffffff;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   overflow: hidden;
@@ -50,7 +50,7 @@
 }
 
 .table th {
-  background-color: var(--color-surface);
+  background-color: var(--color-surface-raised);
   font-weight: 600;
   color: var(--color-text-secondary);
   font-size: var(--text-xs);
@@ -74,7 +74,7 @@
 }
 
 .published {
-  color: var(--color-success, #22c55e);
+  color: var(--color-success);
   font-weight: 600;
   font-size: var(--text-xs);
 }

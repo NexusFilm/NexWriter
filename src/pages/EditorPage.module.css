@@ -27,16 +27,14 @@
 .editorInner {
   width: 100%;
   max-width: 680px;
-  /* US Letter proportions: min-height approximates 8.5x11 ratio */
   min-height: calc(680px * 1.294);
-  background-color: var(--color-page);
+  background-color: #ffffff;
   color: var(--color-text-primary);
   border-radius: var(--radius-lg);
   box-shadow:
     0 1px 4px rgba(0, 0, 0, 0.06),
     0 6px 24px rgba(0, 0, 0, 0.06),
     0 12px 48px rgba(0, 0, 0, 0.04);
-  /* Screenplay margins: wider left (simulating 1.5" binding margin) */
   padding: 60px 56px 60px 72px;
   font-family: var(--font-screenplay);
   font-size: var(--font-size-screenplay);
@@ -46,7 +44,7 @@
 .sidePanel {
   width: var(--sidebar-width);
   flex-shrink: 0;
-  background-color: var(--color-surface);
+  background-color: #ffffff;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   margin: var(--space-4) var(--space-4) var(--space-4) 0;
@@ -61,7 +59,6 @@
   composes: sidePanel;
 }
 
-/* On desktop, always show the side panel */
 @media (min-width: 1024px) {
   .sidePanelHidden {
     display: flex;
@@ -69,7 +66,6 @@
   }
 }
 
-/* On mobile/tablet, hide unless toggled */
 @media (max-width: 1023px) {
   .sidePanelHidden {
     display: none;
@@ -111,7 +107,7 @@
 @media (max-width: 767px) {
   .editorPane {
     padding: var(--space-4) 0;
-    padding-bottom: 64px; /* space for bottom element bar */
+    padding-bottom: 64px;
   }
 
   .editorInner {
@@ -130,7 +126,7 @@
     margin: 0;
     border-radius: 0;
     border: none;
-    background-color: var(--color-surface);
+    background-color: #ffffff;
     padding: var(--space-5);
     animation: none;
   }

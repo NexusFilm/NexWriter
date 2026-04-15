@@ -44,7 +44,7 @@
   gap: var(--space-3);
   padding: var(--space-3) var(--space-5);
   margin-bottom: var(--space-6);
-  background: linear-gradient(135deg, var(--color-accent-muted, rgba(170, 59, 255, 0.08)), transparent);
+  background: linear-gradient(135deg, var(--color-accent-muted), transparent);
   border-left: 3px solid var(--color-accent);
   border-radius: 0 var(--radius) var(--radius) 0;
   font-size: var(--text-sm);

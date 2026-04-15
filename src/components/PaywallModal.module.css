@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .modal {
@@ -16,11 +16,11 @@
   max-width: 720px;
   max-height: 90vh;
   overflow-y: auto;
-  background-color: var(--color-surface);
+  background-color: #ffffff;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 32px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-xl);
 }
 
 .closeBtn {
@@ -33,7 +33,7 @@
   font-size: 22px;
   cursor: pointer;
   padding: 4px 8px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   line-height: 1;
 }
 
@@ -59,7 +59,6 @@
   margin: 0 0 28px;
 }
 
-/* Table wrapper for horizontal scroll on mobile */
 .tableWrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -72,11 +71,10 @@
   font-size: 14px;
 }
 
-/* Header row */
 .comparisonTable thead th {
   position: sticky;
   top: 0;
-  background-color: var(--color-surface);
+  background-color: #ffffff;
   padding: 12px 16px;
   text-align: center;
   font-weight: 700;
@@ -109,12 +107,10 @@
   color: var(--color-accent);
 }
 
-/* Highlighted current tier column */
 .highlightCol {
   background-color: var(--color-accent-muted);
 }
 
-/* Body rows */
 .comparisonTable tbody td {
   padding: 10px 16px;
   text-align: center;
@@ -132,7 +128,6 @@
   border-bottom: none;
 }
 
-/* Check / X marks */
 .check {
   color: var(--color-success);
   font-size: 16px;
@@ -149,7 +144,6 @@
   font-size: 13px;
 }
 
-/* Footer row with buttons */
 .footerRow td {
   padding: 16px 16px 4px;
   border-bottom: none !important;
@@ -159,18 +153,18 @@
   display: inline-block;
   padding: 10px 20px;
   background-color: var(--color-accent);
-  color: var(--color-surface);
+  color: #ffffff;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-family: var(--font-ui);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: background-color var(--transition-fast);
 }
 
 .upgradeBtn:hover {
-  opacity: 0.9;
+  background-color: var(--color-accent-hover);
 }
 
 .upgradeBtn:disabled {
@@ -183,7 +177,7 @@
   padding: 8px 16px;
   background-color: var(--color-surface-raised);
   color: var(--color-text-secondary);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-family: var(--font-ui);
   font-size: 13px;
   font-weight: 600;
