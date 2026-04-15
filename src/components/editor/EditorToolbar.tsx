@@ -16,6 +16,7 @@ interface EditorToolbarProps {
   onTitleChange: (newTitle: string) => void;
   onToggleSidebar: () => void;
   onExport?: () => void;
+  onShare?: () => void;
 }
 
 const SAVE_STATUS_LABELS: Record<SaveStatus, string> = {
@@ -45,6 +46,7 @@ export function EditorToolbar({
   onTitleChange,
   onToggleSidebar,
   onExport,
+  onShare,
 }: EditorToolbarProps) {
   const [localTitle, setLocalTitle] = useState(title);
   const lastCommitted = useRef(title);
@@ -176,6 +178,11 @@ export function EditorToolbar({
         {onExport && (
           <button className={styles.toolbarBtn} onClick={onExport} type="button">
             Export
+          </button>
+        )}
+        {onShare && (
+          <button className={styles.shareBtn} onClick={onShare} type="button">
+            Share
           </button>
         )}
         {scriptId && (

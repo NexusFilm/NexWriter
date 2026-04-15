@@ -219,6 +219,28 @@
   composes: toolbarBtn;
 }
 
+.shareBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 var(--space-4);
+  background-color: var(--color-accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--transition-fast);
+}
+
+.shareBtn:hover {
+  background-color: var(--color-accent-hover);
+}
+
 /* ── Mobile ── */
 @media (max-width: 767px) {
   .toolbar {

@@ -2,34 +2,34 @@
 
 :root {
   /* Backgrounds */
-  --color-editor-bg: #FAFAF7;        /* warm off-white for editor area */
-  --color-dashboard-bg: #F5F3EE;     /* slightly warmer for dashboard */
+  --color-editor-bg: #F2F0EB;        /* warmer, more visible contrast */
+  --color-dashboard-bg: #EDEAE4;     /* noticeably warm */
   --color-surface: #FFFFFF;           /* pure white cards/panels */
-  --color-surface-raised: #F8F6F1;   /* slightly tinted for hover states */
+  --color-surface-raised: #F5F3ED;   /* visible hover state */
   --color-page: #FFFEF9;             /* screenplay page — warm white */
 
   /* Borders */
-  --color-border: #E5E2DB;           /* warm gray border */
-  --color-border-hover: #D0CCC3;     /* darker on hover */
+  --color-border: #D8D4CB;           /* stronger warm border */
+  --color-border-hover: #C0BAB0;     /* clearly darker on hover */
 
-  /* Accent — warm gold */
-  --color-accent: #C4841D;           /* slightly deeper gold for light bg */
-  --color-accent-hover: #A86E15;     /* darker gold on hover */
-  --color-accent-muted: rgba(196, 132, 29, 0.08);  /* subtle gold tint */
-  --color-accent-light: #FFF8EB;     /* very light gold for backgrounds */
+  /* Accent — rich warm gold */
+  --color-accent: #B5751A;           /* deeper, richer gold */
+  --color-accent-hover: #9A6314;     /* darker gold on hover */
+  --color-accent-muted: rgba(181, 117, 26, 0.10);
+  --color-accent-light: #FFF5E0;     /* warm gold tint for backgrounds */
 
   /* Text */
-  --color-text-primary: #1A1A1A;     /* near-black */
-  --color-text-secondary: #6B6560;   /* warm gray */
-  --color-text-tertiary: #9E9890;    /* lighter warm gray */
+  --color-text-primary: #1A1714;     /* warm near-black */
+  --color-text-secondary: #5C5650;   /* darker warm gray for readability */
+  --color-text-tertiary: #8A847C;    /* medium warm gray */
 
   /* Danger */
-  --color-danger: #D93025;
-  --color-danger-bg: rgba(217, 48, 37, 0.06);
-  --color-danger-border: rgba(217, 48, 37, 0.15);
+  --color-danger: #C62828;
+  --color-danger-bg: rgba(198, 40, 40, 0.06);
+  --color-danger-border: rgba(198, 40, 40, 0.15);
 
   /* Success */
-  --color-success: #188038;
+  --color-success: #2E7D32;
 
   /* Typography */
   --font-screenplay: 'Courier Prime', 'Courier New', monospace;
@@ -63,11 +63,11 @@
   --radius-lg: 14px;
   --radius-xl: 18px;
 
-  /* Shadows — warm and subtle for light mode */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.08);
+  /* Shadows — warm with more depth */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.10), 0 4px 8px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.10), 0 8px 16px rgba(0, 0, 0, 0.04);
 
   /* Transitions */
   --transition-fast: 0.15s ease;

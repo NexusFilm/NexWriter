@@ -16,6 +16,7 @@ import { parseScenes } from '@/services/SceneParser';
 import { parseCharacters } from '@/services/CharacterParser';
 import type { ElementType } from '@/types/screenplay';
 import type { Editor } from '@tiptap/react';
+import { ShareModal } from '@/components/ShareModal';
 import styles from './EditorPage.module.css';
 
 const scriptRepo = new ScriptRepository();
@@ -37,6 +38,7 @@ export function EditorPage() {
   const [title, setTitle] = useState('Untitled Script');
   const [editorContent, setEditorContent] = useState<TipTapDocJSON | null>(null);
   const [activeElementType, setActiveElementType] = useState<ElementType | null>(null);
+  const [shareModalVisible, setShareModalVisible] = useState(false);
 
   // TipTap editor instance ref
   const editorRef = useRef<Editor | null>(null);
@@ -211,6 +213,7 @@ export function EditorPage() {
         activeElementType={activeElementType}
         onTitleChange={handleTitleChange}
         onToggleSidebar={toggleSidebar}
+        onShare={() => setShareModalVisible(true)}
       />
       <div className={styles.body}>
         <ElementToolbar
@@ -241,6 +244,12 @@ export function EditorPage() {
           />
         </div>
       </div>
+      <ShareModal
+        scriptId={scriptId ?? ''}
+        scriptTitle={title}
+        visible={shareModalVisible}
+        onClose={() => setShareModalVisible(false)}
+      />
     </div>
   );
 }
