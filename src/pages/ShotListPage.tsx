@@ -238,12 +238,14 @@ export function ShotListPage() {
 
       {selectedSceneIndex === null ? (
         <div className={styles.empty}>
+          <div className={styles.emptyIcon}>🎬</div>
           <p className={styles.emptyText}>
             Select a scene above to start planning your shots.
           </p>
         </div>
       ) : !currentList || entries.length === 0 ? (
         <div className={styles.empty}>
+          <div className={styles.emptyIcon}>📋</div>
           <p className={styles.emptyText}>
             No shots yet. Click "+ Add Shot" to add your first entry.
           </p>

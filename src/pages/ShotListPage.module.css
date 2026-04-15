@@ -3,18 +3,20 @@
 .page {
   min-height: 100vh;
   background-color: var(--color-dashboard-bg);
-  padding-top: calc(var(--navbar-height) + var(--space-8));
+  padding-top: calc(var(--navbar-height) + var(--space-6));
   padding-left: var(--space-10);
   padding-right: var(--space-10);
   padding-bottom: var(--space-12);
   font-family: var(--font-ui);
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .header {
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-2);
 }
 
 .backLink {
@@ -30,33 +32,46 @@
 
 .title {
   font-size: var(--text-2xl);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-primary);
+  letter-spacing: -0.3px;
 }
 
+/* Scene context banner */
 .sceneLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  margin-bottom: var(--space-6);
+  background: linear-gradient(135deg, var(--color-accent-muted, rgba(170, 59, 255, 0.08)), transparent);
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
   font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-4);
+  font-weight: 600;
+  color: var(--color-accent);
+  letter-spacing: 0.02em;
 }
 
 .loading {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--space-4);
   min-height: 60vh;
   color: var(--color-text-secondary);
   font-size: var(--text-lg);
 }
 
 .error {
-  margin-top: var(--space-6);
+  margin-bottom: var(--space-6);
   padding: var(--space-4) var(--space-6);
   color: var(--color-danger);
   background-color: var(--color-danger-bg);
   border: 1px solid var(--color-danger-border);
   border-radius: var(--radius);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   text-align: center;
 }
 
@@ -66,13 +81,24 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-4);
-  min-height: 30vh;
+  min-height: 35vh;
   text-align: center;
-  color: var(--color-text-secondary);
+  padding: var(--space-10);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+}
+
+.emptyIcon {
+  font-size: 40px;
+  opacity: 0.4;
 }
 
 .emptyText {
-  font-size: var(--text-md);
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  max-width: 320px;
+  line-height: 1.6;
 }
 
 @media (max-width: 767px) {
@@ -81,8 +107,6 @@
     padding-right: var(--space-4);
     padding-bottom: 72px;
   }
-
-  .title {
-    font-size: var(--text-xl);
-  }
+  .title { font-size: var(--text-xl); }
+  .sceneLabel { padding: var(--space-2) var(--space-3); font-size: var(--text-xs); }
 }
