@@ -1,0 +1,81 @@
+/* CreditsPage — CSS Module using design tokens */
+
+.page {
+  min-height: 100vh;
+  background-color: var(--color-dashboard-bg);
+  padding: 32px 40px;
+  font-family: var(--font-ui);
+  color: var(--color-text-primary);
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: 24px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.backLink:hover {
+  color: var(--color-text-primary);
+}
+
+.heading {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 32px;
+}
+
+.panel {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  max-width: 560px;
+}
+
+.panelHeading {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+.attribution {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin: 0 0 16px;
+}
+
+.tmdbLogo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  background-color: var(--color-surface-raised);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+}
+
+.tmdbLogoIcon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.tmdbLink {
+  display: inline-block;
+  color: var(--color-accent);
+  font-size: 14px;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.tmdbLink:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}

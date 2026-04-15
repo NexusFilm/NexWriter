@@ -1,13 +1,16 @@
-import { Link } from 'react-router-dom';
+import { useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
-import { useUIStore } from '@/stores/uiStore';
 import styles from './SettingsPage.module.css';
 
 export function SettingsPage() {
-  const tier = useAuthStore((s) => s.tier);
-  const showPaywallModal = useUIStore((s) => s.showPaywallModal);
+  const user = useAuthStore((s) => s.user);
+  const signOut = useAuthStore((s) => s.signOut);
+  const navigate = useNavigate();
 
-  const isPaid = tier === 'writer' || tier === 'pro';
+  const handleLogout = useCallback(async () => {
+    try { await signOut(); navigate('/login'); } catch { /* silent */ }
+  }, [signOut, navigate]);
 
   return (
     <div className={styles.page}>
@@ -17,31 +20,23 @@ export function SettingsPage() {
       <h1 className={styles.heading}>Settings</h1>
 
       <div className={styles.panel}>
-        <h2 className={styles.panelHeading}>Subscription</h2>
-
+        <h2 className={styles.panelHeading}>Account</h2>
         <div className={styles.tierRow}>
-          <span className={styles.tierLabel}>Current plan</span>
-          <span className={isPaid ? styles.tierBadgeAccent : styles.tierBadge}>
-            {tier}
-          </span>
+          <span className={styles.tierLabel}>Email</span>
+          <span className={styles.tierBadge}>{user?.email ?? '—'}</span>
         </div>
+      </div>
 
-        {isPaid ? (
-          <p className={styles.subscriptionInfo}>
-            You're on the {tier} plan. Manage your billing through Stripe.
-          </p>
-        ) : (
-          <p className={styles.subscriptionInfo}>
-            You're on the free plan. Upgrade to unlock cloud sync, premium
-            exports, and more.
-          </p>
-        )}
+      <div className={styles.panel} style={{ marginTop: 24 }}>
+        <h2 className={styles.panelHeading}>About</h2>
+        <Link to="/credits" className={styles.manageBtn} style={{ textDecoration: 'none' }}>
+          Credits &amp; Attribution
+        </Link>
+      </div>
 
-        <button
-          className={styles.manageBtn}
-          onClick={isPaid ? undefined : showPaywallModal}
-        >
-          {isPaid ? 'Manage Subscription' : 'Upgrade Plan'}
+      <div className={styles.panel} style={{ marginTop: 24 }}>
+        <button className={styles.logoutBtn} onClick={handleLogout} type="button">
+          Log Out
         </button>
       </div>
     </div>

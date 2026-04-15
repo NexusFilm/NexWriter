@@ -3,14 +3,19 @@ import { supabase } from '@/lib/supabase';
 import { AppError } from '@/types/errors';
 import type { Tier, GatedFeature } from '@/types/subscription';
 import type { ITierGateService } from '@/types/services';
+import { useFeatureFlagStore } from '@/stores/featureFlagStore';
 
 const FREE_SCRIPT_LIMIT = 3;
 
 /**
  * Pure function for property testing — no DB dependency.
  * Returns true if the user can create a new script given their tier and current script count.
+ * When stripePaymentsEnabled is false, all users get full access.
  */
-export function canCreateScriptPure(tier: Tier, scriptCount: number): boolean {
+export function canCreateScriptPure(tier: Tier, scriptCount: number, stripePaymentsEnabled = true): boolean {
+  if (!stripePaymentsEnabled) {
+    return true;
+  }
   if (tier === 'writer' || tier === 'pro') {
     return true;
   }
@@ -31,12 +36,23 @@ const PAID_FEATURES: ReadonlySet<GatedFeature> = new Set<GatedFeature>([
 /**
  * Pure function for feature-access checks — no DB dependency.
  * Returns true if the given tier grants access to the feature.
+ * When stripePaymentsEnabled is false, all features are accessible.
  */
-export function canAccessFeaturePure(tier: Tier, feature: GatedFeature): boolean {
+export function canAccessFeaturePure(tier: Tier, feature: GatedFeature, stripePaymentsEnabled = true): boolean {
+  if (!stripePaymentsEnabled) {
+    return true;
+  }
   if (!PAID_FEATURES.has(feature)) {
     return true;
   }
   return tier === 'writer' || tier === 'pro';
+}
+
+/**
+ * Reads the stripe_payments feature flag from the FeatureFlagStore.
+ */
+export function isStripePaymentsEnabled(): boolean {
+  return useFeatureFlagStore.getState().isEnabled('stripe_payments');
 }
 
 export class TierGateService implements ITierGateService {
@@ -71,18 +87,28 @@ export class TierGateService implements ITierGateService {
   }
 
   async canCreateScript(userId: string): Promise<boolean> {
+    const stripeEnabled = isStripePaymentsEnabled();
+    if (!stripeEnabled) {
+      return true;
+    }
+
     const tier = await this.getUserTier(userId);
     if (tier === 'writer' || tier === 'pro') {
       return true;
     }
 
     const scriptCount = await this.getScriptCount(userId);
-    return canCreateScriptPure(tier, scriptCount);
+    return canCreateScriptPure(tier, scriptCount, stripeEnabled);
   }
 
   async canAccessFeature(userId: string, feature: GatedFeature): Promise<boolean> {
+    const stripeEnabled = isStripePaymentsEnabled();
+    if (!stripeEnabled) {
+      return true;
+    }
+
     const tier = await this.getUserTier(userId);
-    return canAccessFeaturePure(tier, feature);
+    return canAccessFeaturePure(tier, feature, stripeEnabled);
   }
 
   private async getUserTier(userId: string): Promise<Tier> {

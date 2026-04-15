@@ -15,12 +15,15 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.103.0",
     "@tiptap/core": "^3.22.3",
+    "@tiptap/extension-link": "^3.22.3",
     "@tiptap/pm": "^3.22.3",
     "@tiptap/react": "^3.22.3",
     "@tiptap/starter-kit": "^3.22.3",
     "jspdf": "^4.2.1",
+    "konva": "^10.2.5",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-konva": "^19.2.3",
     "react-router-dom": "^7.14.1",
     "xmlbuilder2": "^4.0.3",
     "zustand": "^5.0.12"

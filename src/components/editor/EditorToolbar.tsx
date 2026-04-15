@@ -175,6 +175,23 @@ export function EditorToolbar({
           {SAVE_STATUS_LABELS[saveStatus]}
         </span>
         <div className={styles.divider} />
+        {scriptId && (
+          <Link to={`/shots/${scriptId}`} className={styles.toolbarBtn} aria-label="Shot lists">
+            Shots
+          </Link>
+        )}
+        {scriptId && (
+          <Link to={`/lighting/${scriptId}/0`} className={styles.toolbarBtn} aria-label="Lighting diagram">
+            Lighting
+          </Link>
+        )}
+        <Link to="/agreements" className={styles.toolbarBtn} aria-label="Agreements">
+          Agreements
+        </Link>
+        <Link to="/moodboard" className={styles.toolbarBtn} aria-label="Mood board">
+          Mood Board
+        </Link>
+        <div className={styles.divider} />
         {onExport && (
           <button className={styles.toolbarBtn} onClick={onExport} type="button">
             Export

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useUIStore } from '@/stores/uiStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useFeatureFlagStore } from '@/stores/featureFlagStore';
 import { SubscriptionRepository } from '@/repositories/SubscriptionRepository';
 import type { Tier } from '@/types/subscription';
 import styles from './PaywallModal.module.css';
@@ -45,10 +46,12 @@ export function PaywallModal() {
   const hidePaywallModal = useUIStore((s) => s.hidePaywallModal);
   const user = useAuthStore((s) => s.user);
   const currentTier = useAuthStore((s) => s.tier);
+  const stripePaymentsEnabled = useFeatureFlagStore((s) => s.isEnabled('stripe_payments'));
   const [loading, setLoading] = useState<Tier | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  if (!visible) return null;
+  // When stripe_payments is disabled, never show the paywall modal
+  if (!stripePaymentsEnabled || !visible) return null;
 
   const handleUpgrade = async (tier: 'writer' | 'pro') => {
     if (!user) return;

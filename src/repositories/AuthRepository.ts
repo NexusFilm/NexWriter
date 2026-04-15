@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { AppError } from '@/types/errors';
+import { isAccountLocked } from '@/services/lockedAccount';
 import type { User, Session } from '@/types/auth';
 import type { IAuthRepository } from '@/types/repositories';
 
@@ -45,6 +46,23 @@ export class AuthRepository implements IAuthRepository {
         'Sign-in succeeded but no user returned',
         'UNKNOWN_ERROR',
         'Something went wrong during sign-in. Please try again.',
+      );
+    }
+
+    // Check if the account is locked
+    const { data: profile } = await supabase
+      .from('sw_user_profiles')
+      .select('locked_at')
+      .eq('id', data.user.id)
+      .single();
+
+    if (profile && isAccountLocked(profile.locked_at)) {
+      // Sign the user out since their account is locked
+      await supabase.auth.signOut();
+      throw new AppError(
+        'Account is locked',
+        'ACCOUNT_LOCKED',
+        'Your account has been locked.',
       );
     }
 

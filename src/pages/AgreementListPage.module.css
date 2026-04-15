@@ -1,0 +1,210 @@
+/* AgreementListPage — CSS Module */
+
+.page {
+  min-height: 100vh;
+  background-color: var(--color-dashboard-bg);
+  padding-top: calc(var(--navbar-height) + var(--space-8));
+  padding-left: var(--space-10);
+  padding-right: var(--space-10);
+  padding-bottom: var(--space-12);
+  font-family: var(--font-ui);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--color-text-secondary);
+  font-size: var(--text-lg);
+}
+
+.error {
+  margin-top: var(--space-6);
+  padding: var(--space-4) var(--space-6);
+  color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius);
+  font-size: var(--text-base);
+  text-align: center;
+}
+
+/* Template Grid */
+.sectionTitle {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.templateGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.templateCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-card-bg, #1e1e2e);
+  border: 1px solid var(--color-border, #333);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.templateCard:hover {
+  border-color: var(--color-accent, #646cff);
+}
+
+.templateName {
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.templateType {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  text-transform: capitalize;
+}
+
+/* Upload area */
+.uploadArea {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.uploadBtn {
+  padding: 0.5rem 1rem;
+  font-size: var(--text-sm);
+  background: var(--color-accent, #646cff);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.uploadBtn:hover {
+  opacity: 0.85;
+}
+
+.uploadBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.uploadHint {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Instance list */
+.instanceList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.instanceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-card-bg, #1e1e2e);
+  border: 1px solid var(--color-border, #333);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--transition-fast);
+}
+
+.instanceRow:hover {
+  border-color: var(--color-accent, #646cff);
+}
+
+.instanceName {
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+}
+
+.instanceMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.statusBadge {
+  font-size: var(--text-sm);
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+
+.statusDraft {
+  background: #3a3a50;
+  color: #aaa;
+}
+
+.statusSigned {
+  background: #1a3a2a;
+  color: #6fcf97;
+}
+
+.instanceDate {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  min-height: 20vh;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 767px) {
+  .page {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    padding-bottom: 72px;
+  }
+
+  .title {
+    font-size: var(--text-xl);
+  }
+
+  .templateGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+}

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AppError } from '@/types/errors';
-import { canCreateScriptPure, canAccessFeaturePure } from './TierGateService';
+import { canCreateScriptPure, canAccessFeaturePure, isStripePaymentsEnabled } from './TierGateService';
+import { useFeatureFlagStore } from '@/stores/featureFlagStore';
 import type { Tier, GatedFeature } from '@/types/subscription';
 
 // --- Pure function tests (no mocking needed) ---
@@ -28,6 +29,13 @@ describe('canCreateScriptPure', () => {
     expect(canCreateScriptPure('free', 3)).toBe(false);
     expect(canCreateScriptPure('free', 4)).toBe(false);
     expect(canCreateScriptPure('free', 100)).toBe(false);
+  });
+
+  it('returns true for any tier/count when stripePaymentsEnabled is false', () => {
+    expect(canCreateScriptPure('free', 100, false)).toBe(true);
+    expect(canCreateScriptPure('free', 3, false)).toBe(true);
+    expect(canCreateScriptPure('writer', 0, false)).toBe(true);
+    expect(canCreateScriptPure('pro', 50, false)).toBe(true);
   });
 });
 
@@ -58,6 +66,36 @@ describe('canAccessFeaturePure', () => {
     for (const feature of paidFeatures) {
       expect(canAccessFeaturePure('pro', feature)).toBe(true);
     }
+  });
+
+  it('grants all paid features for free tier when stripePaymentsEnabled is false', () => {
+    for (const feature of paidFeatures) {
+      expect(canAccessFeaturePure('free', feature, false)).toBe(true);
+    }
+  });
+});
+
+describe('isStripePaymentsEnabled', () => {
+  beforeEach(() => {
+    useFeatureFlagStore.setState({ flags: {} as any, loaded: false });
+  });
+
+  it('returns false when stripe_payments flag is not set', () => {
+    expect(isStripePaymentsEnabled()).toBe(false);
+  });
+
+  it('returns true when stripe_payments flag is enabled', () => {
+    useFeatureFlagStore.getState().setFlags([
+      { id: '1', featureKey: 'stripe_payments', featureLabel: 'Stripe', isEnabled: true, updatedAt: '' },
+    ]);
+    expect(isStripePaymentsEnabled()).toBe(true);
+  });
+
+  it('returns false when stripe_payments flag is disabled', () => {
+    useFeatureFlagStore.getState().setFlags([
+      { id: '1', featureKey: 'stripe_payments', featureLabel: 'Stripe', isEnabled: false, updatedAt: '' },
+    ]);
+    expect(isStripePaymentsEnabled()).toBe(false);
   });
 });
 
@@ -115,6 +153,10 @@ describe('TierGateService', () => {
     vi.clearAllMocks();
     queryMock = createQueryMock();
     service = new TierGateService();
+    // Default: stripe_payments enabled so existing tier gating is enforced
+    useFeatureFlagStore.getState().setFlags([
+      { id: '1', featureKey: 'stripe_payments', featureLabel: 'Stripe', isEnabled: true, updatedAt: '' },
+    ]);
   });
 
   describe('getScriptCount', () => {
@@ -214,6 +256,28 @@ describe('TierGateService', () => {
 
       const result = await service.canAccessFeature('user-1', 'cloud_sync');
       expect(result).toBe(true);
+    });
+  });
+
+  describe('stripe_payments disabled behavior', () => {
+    beforeEach(() => {
+      useFeatureFlagStore.getState().setFlags([
+        { id: '1', featureKey: 'stripe_payments', featureLabel: 'Stripe', isEnabled: false, updatedAt: '' },
+      ]);
+    });
+
+    it('canCreateScript returns true for free tier with many scripts', async () => {
+      const result = await service.canCreateScript('user-1');
+      expect(result).toBe(true);
+      // Should not even query the database for tier
+      expect(queryMock.maybeSingle).not.toHaveBeenCalled();
+    });
+
+    it('canAccessFeature returns true for free tier on paid features', async () => {
+      const result = await service.canAccessFeature('user-1', 'fdx_export');
+      expect(result).toBe(true);
+      // Should not query the database for tier
+      expect(queryMock.maybeSingle).not.toHaveBeenCalled();
     });
   });
 });

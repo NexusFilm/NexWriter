@@ -74,6 +74,90 @@ export class BlogRepository implements IBlogRepository {
     return mapBlogPost(data as BlogPostRow);
   }
 
+  /** Fetch all posts including drafts (for admin use) */
+  async getAllPosts(): Promise<BlogPost[]> {
+    const { data, error } = await supabase
+      .from('sw_blog_posts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      throw new AppError(
+        error.message,
+        'UNKNOWN_ERROR',
+        'Unable to load blog posts. Please try again.',
+        true,
+      );
+    }
+
+    return (data as BlogPostRow[]).map(mapBlogPost);
+  }
+
+  /** Upsert a blog post (insert or update) */
+  async upsertPost(post: {
+    id?: string;
+    title: string;
+    slug: string;
+    content: string;
+    author: string;
+    category: string;
+    published_at?: string | null;
+    read_time_minutes?: number | null;
+  }): Promise<BlogPost> {
+    if (post.id) {
+      const { data, error } = await supabase
+        .from('sw_blog_posts')
+        .update({
+          title: post.title,
+          slug: post.slug,
+          content: post.content,
+          author: post.author,
+          category: post.category,
+          published_at: post.published_at ?? null,
+          read_time_minutes: post.read_time_minutes ?? null,
+        })
+        .eq('id', post.id)
+        .select()
+        .single();
+
+      if (error) {
+        throw new AppError(
+          error.message,
+          'UNKNOWN_ERROR',
+          'Unable to save blog post. Please try again.',
+          true,
+        );
+      }
+
+      return mapBlogPost(data as BlogPostRow);
+    }
+
+    const { data, error } = await supabase
+      .from('sw_blog_posts')
+      .insert({
+        title: post.title,
+        slug: post.slug,
+        content: post.content,
+        author: post.author,
+        category: post.category,
+        published_at: post.published_at ?? null,
+        read_time_minutes: post.read_time_minutes ?? null,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      throw new AppError(
+        error.message,
+        'UNKNOWN_ERROR',
+        'Unable to create blog post. Please try again.',
+        true,
+      );
+    }
+
+    return mapBlogPost(data as BlogPostRow);
+  }
+
   async getCategories(): Promise<string[]> {
     const { data, error } = await supabase
       .from('sw_blog_posts')

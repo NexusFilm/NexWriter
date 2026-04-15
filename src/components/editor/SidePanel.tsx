@@ -15,6 +15,7 @@ interface SidePanelProps {
   onSceneClick: (elementId: string) => void;
   onCharacterClick: (elementId: string) => void;
   onClose?: () => void;
+  scriptId?: string;
 }
 
 const TAB_LABELS: Record<PanelTab, string> = {
@@ -33,6 +34,7 @@ export function SidePanel({
   onSceneClick,
   onCharacterClick,
   onClose,
+  scriptId,
 }: SidePanelProps) {
   return (
     <div className={styles.container}>
@@ -62,7 +64,7 @@ export function SidePanel({
       </div>
       <div className={styles.content} role="tabpanel">
         {activeTab === 'scenes' && (
-          <ScenePanel scenes={scenes} onSceneClick={onSceneClick} />
+          <ScenePanel scenes={scenes} onSceneClick={onSceneClick} scriptId={scriptId} />
         )}
         {activeTab === 'characters' && (
           <CharacterTracker characters={characters} onCharacterClick={onCharacterClick} />

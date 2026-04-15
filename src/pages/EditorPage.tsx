@@ -241,6 +241,7 @@ export function EditorPage() {
             onSceneClick={handleElementScroll}
             onCharacterClick={handleElementScroll}
             onClose={toggleSidebar}
+            scriptId={scriptId}
           />
         </div>
       </div>

@@ -8,6 +8,10 @@ const mockSignInWithOAuth = vi.fn();
 const mockSignOut = vi.fn();
 const mockGetSession = vi.fn();
 const mockOnAuthStateChange = vi.fn();
+const mockSingle = vi.fn();
+const mockEq = vi.fn(() => ({ single: mockSingle }));
+const mockSelect = vi.fn(() => ({ eq: mockEq }));
+const mockFrom = vi.fn(() => ({ select: mockSelect }));
 
 vi.mock('@/lib/supabase', () => ({
   supabase: {
@@ -19,6 +23,7 @@ vi.mock('@/lib/supabase', () => ({
       getSession: (...args: unknown[]) => mockGetSession(...args),
       onAuthStateChange: (...args: unknown[]) => mockOnAuthStateChange(...args),
     },
+    from: (...args: unknown[]) => mockFrom(...args),
   },
 }));
 
@@ -78,6 +83,7 @@ describe('AuthRepository', () => {
         data: { user: fakeUser },
         error: null,
       });
+      mockSingle.mockResolvedValue({ data: { locked_at: null }, error: null });
 
       const user = await repo.signIn('test@example.com', 'password123');
       expect(user).toEqual(fakeUser);
@@ -92,6 +98,46 @@ describe('AuthRepository', () => {
       await expect(repo.signIn('test@example.com', 'wrong')).rejects.toMatchObject({
         code: 'AUTH_INVALID_CREDENTIALS',
       });
+    });
+
+    it('throws ACCOUNT_LOCKED when locked_at is non-null', async () => {
+      mockSignInWithPassword.mockResolvedValue({
+        data: { user: fakeUser },
+        error: null,
+      });
+      mockSingle.mockResolvedValue({
+        data: { locked_at: '2024-06-01T00:00:00Z' },
+        error: null,
+      });
+      mockSignOut.mockResolvedValue({ error: null });
+
+      await expect(repo.signIn('test@example.com', 'password123')).rejects.toMatchObject({
+        code: 'ACCOUNT_LOCKED',
+        userMessage: 'Your account has been locked.',
+      });
+      expect(mockSignOut).toHaveBeenCalled();
+    });
+
+    it('allows login when locked_at is null', async () => {
+      mockSignInWithPassword.mockResolvedValue({
+        data: { user: fakeUser },
+        error: null,
+      });
+      mockSingle.mockResolvedValue({ data: { locked_at: null }, error: null });
+
+      const user = await repo.signIn('test@example.com', 'password123');
+      expect(user).toEqual(fakeUser);
+    });
+
+    it('allows login when profile query returns no data', async () => {
+      mockSignInWithPassword.mockResolvedValue({
+        data: { user: fakeUser },
+        error: null,
+      });
+      mockSingle.mockResolvedValue({ data: null, error: null });
+
+      const user = await repo.signIn('test@example.com', 'password123');
+      expect(user).toEqual(fakeUser);
     });
   });
 

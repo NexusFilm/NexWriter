@@ -1,0 +1,109 @@
+.page {
+  padding: var(--space-8);
+  font-family: var(--font-ui);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-6);
+}
+
+.flagList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.flagRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.flagInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.flagLabel {
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.flagKey {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  font-family: monospace;
+}
+
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.toggleOn {
+  composes: toggle;
+  background-color: var(--color-accent);
+}
+
+.toggleOff {
+  composes: toggle;
+  background-color: var(--color-border);
+}
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: white;
+  transition: transform var(--transition-fast);
+}
+
+.toggleOn::after {
+  transform: translateX(20px);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  color: var(--color-text-secondary);
+}
+
+.error {
+  padding: var(--space-4) var(--space-6);
+  color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+  border: 1px solid var(--color-danger-border);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .page {
+    padding: var(--space-4);
+  }
+
+  .flagRow {
+    padding: var(--space-3) var(--space-4);
+  }
+}

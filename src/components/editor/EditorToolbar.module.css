@@ -268,9 +268,15 @@
   .elementIndicator,
   .pageCount,
   .divider,
-  .toolbarBtn,
   .historyLink {
     display: none;
+  }
+
+  /* Keep production tool links visible on mobile but compact */
+  .toolbarBtn {
+    height: 28px;
+    padding: 0 var(--space-2);
+    font-size: 11px;
   }
 
   /* Save status as a colored dot */
