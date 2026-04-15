@@ -206,13 +206,13 @@
 .panelToggleActive {
   background-color: var(--color-accent);
   border-color: var(--color-accent);
-  color: var(--color-editor-bg);
+  color: var(--color-surface);
 }
 
 .panelToggleActive:hover {
   background-color: var(--color-accent-hover);
   border-color: var(--color-accent-hover);
-  color: var(--color-editor-bg);
+  color: var(--color-surface);
 }
 
 .historyLink {
@@ -261,7 +261,7 @@
   }
 
   .saved {
-    background-color: #4ade80;
+    background-color: var(--color-success);
   }
 
   .saving {

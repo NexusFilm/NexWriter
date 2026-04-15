@@ -76,7 +76,7 @@
   height: 36px;
   padding: 0 var(--space-5);
   background-color: var(--color-accent);
-  color: var(--color-editor-bg);
+  color: var(--color-surface);
   border: none;
   border-radius: var(--radius);
   font-size: var(--text-base);

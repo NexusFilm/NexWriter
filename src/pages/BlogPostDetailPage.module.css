@@ -77,6 +77,6 @@
   align-items: center;
   justify-content: center;
   min-height: 60vh;
-  color: #e05252;
+  color: var(--color-danger);
   font-size: 14px;
 }

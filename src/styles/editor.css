@@ -8,8 +8,8 @@
   font-family: 'Courier Prime', 'Courier New', monospace;
   font-size: 12pt;
   line-height: 1.0;
-  color: #1a1a1a;
-  caret-color: #E8A427;
+  color: #2C2C2C;
+  caret-color: var(--color-accent);
   white-space: pre-wrap;
   word-wrap: break-word;
 }
@@ -29,17 +29,17 @@
 .ProseMirror > div:only-child:empty::before {
   content: 'Start writing…';
   float: left;
-  color: #bbb;
+  color: var(--color-text-tertiary);
   pointer-events: none;
   height: 0;
   font-style: italic;
 }
 
-/* Screenplay element styles for light parchment page */
+/* Screenplay element styles for warm white page */
 .ProseMirror .el-scene-heading {
   text-transform: uppercase;
   font-weight: bold;
-  color: #1a1a1a;
+  color: #1A1A1A;
   margin-top: 1em;
   margin-bottom: 0;
   padding-bottom: 0.15em;
@@ -47,7 +47,7 @@
 
 .ProseMirror .el-action {
   text-align: left;
-  color: #1a1a1a;
+  color: #2C2C2C;
   margin-top: 0.75em;
   margin-bottom: 0;
 }
@@ -55,20 +55,20 @@
 .ProseMirror .el-character {
   text-transform: uppercase;
   margin-left: 35%;
-  color: #1a1a1a;
+  color: #1A1A1A;
   margin-top: 0.75em;
   margin-bottom: 0;
 }
 
 .ProseMirror .el-dialogue {
   margin: 0 25% 0 20%;
-  color: #1a1a1a;
+  color: #2C2C2C;
   margin-top: 0.15em;
 }
 
 .ProseMirror .el-parenthetical {
   margin: 0 30% 0 28%;
-  color: #444;
+  color: #6B6560;
   font-style: italic;
   margin-top: 0.1em;
 }
@@ -76,20 +76,20 @@
 .ProseMirror .el-transition {
   text-transform: uppercase;
   text-align: right;
-  color: #1a1a1a;
+  color: #1A1A1A;
   margin-top: 0.75em;
   margin-bottom: 0;
 }
 
 .ProseMirror .el-title-page {
   text-align: center;
-  color: #1a1a1a;
+  color: #1A1A1A;
   margin-bottom: 1em;
 }
 
-/* Selection styling inside the editor */
+/* Selection styling inside the editor — warm gold */
 .ProseMirror ::selection {
-  background-color: rgba(66, 133, 244, 0.3);
+  background-color: rgba(196, 132, 29, 0.15);
 }
 
 

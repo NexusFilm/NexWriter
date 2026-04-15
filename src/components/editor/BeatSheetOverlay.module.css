@@ -44,13 +44,13 @@
 }
 
 .templateBtn:hover {
-  background-color: var(--color-border);
+  background-color: var(--color-surface-raised);
 }
 
 .templateBtnActive {
   composes: templateBtn;
   border-color: var(--color-accent);
-  background-color: rgba(232, 164, 39, 0.08);
+  background-color: var(--color-accent-muted);
 }
 
 .templateBtnLocked {

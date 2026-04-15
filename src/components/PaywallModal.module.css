@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .modal {
@@ -20,7 +20,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 32px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
 }
 
 .closeBtn {
@@ -39,7 +39,7 @@
 
 .closeBtn:hover {
   color: var(--color-text-primary);
-  background-color: var(--color-border);
+  background-color: var(--color-surface-raised);
 }
 
 .heading {
@@ -111,7 +111,7 @@
 
 /* Highlighted current tier column */
 .highlightCol {
-  background-color: rgba(232, 164, 39, 0.06);
+  background-color: var(--color-accent-muted);
 }
 
 /* Body rows */
@@ -134,7 +134,7 @@
 
 /* Check / X marks */
 .check {
-  color: #4caf50;
+  color: var(--color-success);
   font-size: 16px;
   font-weight: 700;
 }
@@ -159,7 +159,7 @@
   display: inline-block;
   padding: 10px 20px;
   background-color: var(--color-accent);
-  color: #0D0D0D;
+  color: var(--color-surface);
   border: none;
   border-radius: 6px;
   font-family: var(--font-ui);
@@ -181,7 +181,7 @@
 .currentBadge {
   display: inline-block;
   padding: 8px 16px;
-  background-color: var(--color-border);
+  background-color: var(--color-surface-raised);
   color: var(--color-text-secondary);
   border-radius: 6px;
   font-family: var(--font-ui);
@@ -192,7 +192,7 @@
 .errorMsg {
   font-family: var(--font-ui);
   font-size: 13px;
-  color: #e05252;
+  color: var(--color-danger);
   text-align: center;
   margin-top: 16px;
 }

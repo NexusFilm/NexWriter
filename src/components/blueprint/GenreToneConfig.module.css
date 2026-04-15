@@ -52,6 +52,6 @@
 .optionSelected {
   composes: option;
   border-color: var(--color-accent);
-  background-color: rgba(232, 164, 39, 0.08);
+  background-color: var(--color-accent-muted);
   color: var(--color-accent);
 }

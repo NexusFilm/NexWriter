@@ -51,7 +51,7 @@
 .filterBtnActive {
   composes: filterBtn;
   background: var(--color-accent);
-  color: var(--color-editor-bg);
+  color: var(--color-surface);
   border-color: var(--color-accent);
   font-weight: 600;
 }
@@ -113,7 +113,7 @@
   align-items: center;
   justify-content: center;
   min-height: 60vh;
-  color: #e05252;
+  color: var(--color-danger);
   font-size: 14px;
 }
 

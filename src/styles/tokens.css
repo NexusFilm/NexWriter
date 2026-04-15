@@ -1,22 +1,35 @@
 /* Design System Tokens — DraftKit Screenwriter */
 
 :root {
-  /* Colors */
-  --color-editor-bg: #0D0D0D;
-  --color-dashboard-bg: #111111;
-  --color-surface: #1A1A1A;
-  --color-surface-raised: #222222;
-  --color-border: #2A2A2A;
-  --color-border-hover: #3A3A3A;
-  --color-accent: #E8A427;
-  --color-accent-hover: #F0B340;
-  --color-accent-muted: rgba(232, 164, 39, 0.12);
-  --color-text-primary: #F0EDE6;
-  --color-text-secondary: #7A7A7A;
-  --color-text-tertiary: #555555;
-  --color-danger: #e05252;
-  --color-danger-bg: rgba(248, 113, 113, 0.1);
-  --color-danger-border: rgba(248, 113, 113, 0.2);
+  /* Backgrounds */
+  --color-editor-bg: #FAFAF7;        /* warm off-white for editor area */
+  --color-dashboard-bg: #F5F3EE;     /* slightly warmer for dashboard */
+  --color-surface: #FFFFFF;           /* pure white cards/panels */
+  --color-surface-raised: #F8F6F1;   /* slightly tinted for hover states */
+  --color-page: #FFFEF9;             /* screenplay page — warm white */
+
+  /* Borders */
+  --color-border: #E5E2DB;           /* warm gray border */
+  --color-border-hover: #D0CCC3;     /* darker on hover */
+
+  /* Accent — warm gold */
+  --color-accent: #C4841D;           /* slightly deeper gold for light bg */
+  --color-accent-hover: #A86E15;     /* darker gold on hover */
+  --color-accent-muted: rgba(196, 132, 29, 0.08);  /* subtle gold tint */
+  --color-accent-light: #FFF8EB;     /* very light gold for backgrounds */
+
+  /* Text */
+  --color-text-primary: #1A1A1A;     /* near-black */
+  --color-text-secondary: #6B6560;   /* warm gray */
+  --color-text-tertiary: #9E9890;    /* lighter warm gray */
+
+  /* Danger */
+  --color-danger: #D93025;
+  --color-danger-bg: rgba(217, 48, 37, 0.06);
+  --color-danger-border: rgba(217, 48, 37, 0.15);
+
+  /* Success */
+  --color-success: #188038;
 
   /* Typography */
   --font-screenplay: 'Courier Prime', 'Courier New', monospace;
@@ -50,11 +63,11 @@
   --radius-lg: 14px;
   --radius-xl: 18px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.6);
+  /* Shadows — warm and subtle for light mode */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.08);
 
   /* Transitions */
   --transition-fast: 0.15s ease;
