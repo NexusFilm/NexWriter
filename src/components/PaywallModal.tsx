@@ -7,49 +7,38 @@ import styles from './PaywallModal.module.css';
 
 const subscriptionRepo = new SubscriptionRepository();
 
-interface TierInfo {
-  key: Tier;
-  name: string;
-  price: string;
-  features: string[];
+type CellValue = boolean | string;
+
+interface FeatureRow {
+  label: string;
+  free: CellValue;
+  writer: CellValue;
+  pro: CellValue;
 }
 
-const tiers: TierInfo[] = [
-  {
-    key: 'free',
-    name: 'Free',
-    price: 'Free',
-    features: [
-      '3 scripts',
-      'Local autosave',
-      'PDF export',
-      '3-Act beat sheet',
-      '5 version snapshots',
-    ],
-  },
-  {
-    key: 'writer',
-    name: 'Writer',
-    price: '$6.99/mo',
-    features: [
-      'Unlimited scripts',
-      'Cloud sync',
-      'PDF + FDX + Fountain export',
-      'All beat sheets',
-      'Full version history',
-      'Ad-free',
-    ],
-  },
-  {
-    key: 'pro',
-    name: 'Pro',
-    price: '$13.99/mo',
-    features: [
-      'Everything in Writer',
-      'Priority support',
-    ],
-  },
+const FEATURES: FeatureRow[] = [
+  { label: 'Scripts',          free: '3',      writer: 'Unlimited', pro: 'Unlimited' },
+  { label: 'Cloud Sync',      free: false,     writer: true,        pro: true },
+  { label: 'PDF Export',       free: true,      writer: true,        pro: true },
+  { label: 'FDX Export',       free: false,     writer: true,        pro: true },
+  { label: 'Fountain Export',  free: false,     writer: true,        pro: true },
+  { label: 'Beat Sheets',     free: '3-Act',   writer: 'All',       pro: 'All' },
+  { label: 'Version History', free: '5',       writer: 'Unlimited', pro: 'Unlimited' },
+  { label: 'Ad-Free',         free: false,     writer: true,        pro: true },
+  { label: 'Priority Support', free: false,    writer: false,       pro: true },
 ];
+
+const TIERS: { key: Tier; name: string; price: string }[] = [
+  { key: 'free',   name: 'Free',   price: 'Free' },
+  { key: 'writer', name: 'Writer', price: '$6.99/mo' },
+  { key: 'pro',    name: 'Pro',    price: '$13.99/mo' },
+];
+
+function CellContent({ value }: { value: CellValue }) {
+  if (value === true)  return <span className={styles.check} aria-label="Included">✓</span>;
+  if (value === false) return <span className={styles.cross} aria-label="Not included">✗</span>;
+  return <span className={styles.cellText}>{value}</span>;
+}
 
 export function PaywallModal() {
   const visible = useUIStore((s) => s.paywallModalVisible);
@@ -89,6 +78,8 @@ export function PaywallModal() {
     }
   };
 
+  const colClass = (tier: Tier) => (tier === currentTier ? styles.highlightCol : undefined);
+
   return (
     <div className={styles.overlay} onClick={handleOverlayClick} role="dialog" aria-modal="true" aria-label="Upgrade your plan">
       <div className={styles.modal}>
@@ -101,46 +92,64 @@ export function PaywallModal() {
           Unlock more features to supercharge your screenwriting workflow.
         </p>
 
-        <div className={styles.tierGrid}>
-          {tiers.map((tier) => {
-            const isCurrent = tier.key === currentTier;
-            const isUpgrade = tier.key === 'writer' || tier.key === 'pro';
-            const isHighlighted = tier.key === 'writer';
-
-            return (
-              <div
-                key={tier.key}
-                className={isHighlighted ? styles.tierCardHighlighted : styles.tierCard}
-              >
-                <h3 className={styles.tierName}>{tier.name}</h3>
-                <p className={tier.key === 'free' ? styles.tierPriceFree : styles.tierPrice}>
-                  {tier.price}
-                </p>
-
-                <ul className={styles.featureList}>
-                  {tier.features.map((feature) => (
-                    <li key={feature} className={styles.featureItem}>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                {isCurrent ? (
-                  <button className={styles.currentBtn} disabled>
-                    Current plan
-                  </button>
-                ) : isUpgrade ? (
-                  <button
-                    className={styles.upgradeBtn}
-                    disabled={loading !== null}
-                    onClick={() => handleUpgrade(tier.key as 'writer' | 'pro')}
-                  >
-                    {loading === tier.key ? 'Redirecting…' : `Upgrade to ${tier.name}`}
-                  </button>
-                ) : null}
-              </div>
-            );
-          })}
+        <div className={styles.tableWrap}>
+          <table className={styles.comparisonTable}>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                {TIERS.map((t) => (
+                  <th key={t.key} className={colClass(t.key)}>
+                    <span className={styles.tierHeaderName}>{t.name}</span>
+                    <span className={t.key === 'free' ? styles.tierHeaderPrice : styles.tierHeaderPriceAccent}>
+                      {t.price}
+                    </span>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {FEATURES.map((row) => (
+                <tr key={row.label}>
+                  <td>{row.label}</td>
+                  <td className={colClass('free')}><CellContent value={row.free} /></td>
+                  <td className={colClass('writer')}><CellContent value={row.writer} /></td>
+                  <td className={colClass('pro')}><CellContent value={row.pro} /></td>
+                </tr>
+              ))}
+              <tr className={styles.footerRow}>
+                <td />
+                <td className={colClass('free')}>
+                  {currentTier === 'free' && <span className={styles.currentBadge}>Current plan</span>}
+                </td>
+                <td className={colClass('writer')}>
+                  {currentTier === 'writer' ? (
+                    <span className={styles.currentBadge}>Current plan</span>
+                  ) : (
+                    <button
+                      className={styles.upgradeBtn}
+                      disabled={loading !== null}
+                      onClick={() => handleUpgrade('writer')}
+                    >
+                      {loading === 'writer' ? 'Redirecting…' : 'Upgrade'}
+                    </button>
+                  )}
+                </td>
+                <td className={colClass('pro')}>
+                  {currentTier === 'pro' ? (
+                    <span className={styles.currentBadge}>Current plan</span>
+                  ) : (
+                    <button
+                      className={styles.upgradeBtn}
+                      disabled={loading !== null}
+                      onClick={() => handleUpgrade('pro')}
+                    >
+                      {loading === 'pro' ? 'Redirecting…' : 'Upgrade'}
+                    </button>
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         {error && <p className={styles.errorMsg}>{error}</p>}

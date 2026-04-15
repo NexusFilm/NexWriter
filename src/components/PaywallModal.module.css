@@ -1,4 +1,4 @@
-/* PaywallModal — CSS Module */
+/* PaywallModal — Feature Comparison Table */
 
 .overlay {
   position: fixed;
@@ -13,7 +13,7 @@
 .modal {
   position: relative;
   width: 100%;
-  max-width: 820px;
+  max-width: 720px;
   max-height: 90vh;
   overflow-y: auto;
   background-color: var(--color-surface);
@@ -59,77 +59,105 @@
   margin: 0 0 28px;
 }
 
-.tierGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+/* Table wrapper for horizontal scroll on mobile */
+.tableWrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.tierCard {
-  display: flex;
-  flex-direction: column;
-  padding: 24px 20px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  background-color: var(--color-editor-bg);
-}
-
-.tierCardHighlighted {
-  composes: tierCard;
-  border-color: var(--color-accent);
-}
-
-.tierName {
+.comparisonTable {
+  width: 100%;
+  border-collapse: collapse;
   font-family: var(--font-ui);
-  font-size: 18px;
+  font-size: 14px;
+}
+
+/* Header row */
+.comparisonTable thead th {
+  position: sticky;
+  top: 0;
+  background-color: var(--color-surface);
+  padding: 12px 16px;
+  text-align: center;
   font-weight: 700;
   color: var(--color-text-primary);
-  margin: 0 0 4px;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
 }
 
-.tierPrice {
-  font-family: var(--font-ui);
-  font-size: 14px;
-  color: var(--color-accent);
-  font-weight: 600;
-  margin: 0 0 16px;
+.comparisonTable thead th:first-child {
+  text-align: left;
 }
 
-.tierPriceFree {
-  font-family: var(--font-ui);
-  font-size: 14px;
-  color: var(--color-text-secondary);
-  font-weight: 600;
-  margin: 0 0 16px;
+.tierHeaderName {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary);
 }
 
-.featureList {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 20px;
-  flex: 1;
-}
-
-.featureItem {
-  font-family: var(--font-ui);
+.tierHeaderPrice {
+  display: block;
   font-size: 13px;
-  color: var(--color-text-primary);
-  padding: 4px 0;
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
 }
 
-.featureItem::before {
-  content: '✓';
+.tierHeaderPriceAccent {
+  composes: tierHeaderPrice;
   color: var(--color-accent);
+}
+
+/* Highlighted current tier column */
+.highlightCol {
+  background-color: rgba(232, 164, 39, 0.06);
+}
+
+/* Body rows */
+.comparisonTable tbody td {
+  padding: 10px 16px;
+  text-align: center;
+  color: var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.comparisonTable tbody td:first-child {
+  text-align: left;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.comparisonTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Check / X marks */
+.check {
+  color: #4caf50;
+  font-size: 16px;
   font-weight: 700;
-  flex-shrink: 0;
+}
+
+.cross {
+  color: var(--color-text-tertiary);
+  font-size: 16px;
+}
+
+.cellText {
+  color: var(--color-text-primary);
+  font-size: 13px;
+}
+
+/* Footer row with buttons */
+.footerRow td {
+  padding: 16px 16px 4px;
+  border-bottom: none !important;
 }
 
 .upgradeBtn {
-  width: 100%;
-  padding: 10px 16px;
+  display: inline-block;
+  padding: 10px 20px;
   background-color: var(--color-accent);
   color: #0D0D0D;
   border: none;
@@ -150,17 +178,15 @@
   cursor: not-allowed;
 }
 
-.currentBtn {
-  width: 100%;
-  padding: 10px 16px;
+.currentBadge {
+  display: inline-block;
+  padding: 8px 16px;
   background-color: var(--color-border);
   color: var(--color-text-secondary);
-  border: none;
   border-radius: 6px;
   font-family: var(--font-ui);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  cursor: default;
 }
 
 .errorMsg {
@@ -186,10 +212,6 @@
     padding: var(--space-6) var(--space-4);
   }
 
-  .tierGrid {
-    grid-template-columns: 1fr;
-  }
-
   .heading {
     font-size: var(--text-xl);
   }
@@ -198,8 +220,12 @@
     margin-bottom: var(--space-5);
   }
 
-  .tierCard,
-  .tierCardHighlighted {
-    padding: var(--space-4) var(--space-4);
+  .comparisonTable {
+    font-size: 13px;
+  }
+
+  .comparisonTable thead th,
+  .comparisonTable tbody td {
+    padding: 8px 10px;
   }
 }

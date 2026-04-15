@@ -66,6 +66,23 @@ export function EditorPage() {
   const scenes = useMemo(() => parseScenes(elements), [elements]);
   const characters = useMemo(() => parseCharacters(elements), [elements]);
 
+  // Extract character names from CHARACTER elements + ALL CAPS words in ACTION text
+  const allCharacterNames = useMemo(() => {
+    const namesFromCharElements = characters.map((c) => c.name.toUpperCase());
+    const namesFromActions = new Set<string>();
+    for (const el of elements) {
+      if (el.type === 'ACTION' && el.text) {
+        const matches = el.text.match(/\b[A-Z]{2,}\b/g);
+        if (matches) {
+          for (const m of matches) {
+            namesFromActions.add(m);
+          }
+        }
+      }
+    }
+    return [...new Set([...namesFromCharElements, ...namesFromActions])];
+  }, [elements, characters]);
+
   // Default panel tab to 'scenes' when sidebar opens
   const currentTab = activePanelTab ?? 'scenes';
 
@@ -209,7 +226,7 @@ export function EditorPage() {
               onUpdate={handleEditorUpdate}
               onEditorReady={handleEditorReady}
               onSelectionUpdate={handleSelectionUpdate}
-              characterNames={characters.map((c) => c.name)}
+              characterNames={allCharacterNames}
             />
           </div>
         </div>

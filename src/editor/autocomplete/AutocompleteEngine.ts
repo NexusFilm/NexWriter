@@ -152,9 +152,9 @@ function getCrossElementSuggestions(
     }
   }
 
-  // ALL CAPS text (2+ chars) matching a previously-used character name
+  // Match character names case-insensitively (1+ chars)
   const upper = trimmed.toUpperCase();
-  if (trimmed.length >= 2 && trimmed === upper) {
+  if (trimmed.length >= 1) {
     for (const charName of existingCharacters) {
       const charUpper = charName.toUpperCase();
       if (charUpper.startsWith(upper) && charUpper !== upper) {
