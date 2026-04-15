@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Stage, Layer, Rect, Circle, Line, Text, Transformer, RegularPolygon } from 'react-konva';
 import type Konva from 'konva';
@@ -71,7 +71,7 @@ function generateId(): string {
 // --- Grid background component ---
 
 function GridLines({ width, height }: { width: number; height: number }) {
-  const lines: JSX.Element[] = [];
+  const lines: React.ReactNode[] = [];
   // Vertical lines
   for (let x = 0; x <= width; x += GRID_SPACING) {
     lines.push(
@@ -143,7 +143,7 @@ function ElementShape({ element, isSelected, onSelect, onDragEnd, onTransformEnd
     onTransformEnd: handleTransformEnd,
   };
 
-  let shape: JSX.Element;
+  let shape: React.ReactNode;
 
   switch (element.type) {
     case 'lighting_symbol':

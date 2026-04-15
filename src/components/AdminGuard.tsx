@@ -40,8 +40,7 @@ export function AdminGuard() {
       .then(({ data }) => {
         setAuthorized(isAdmin(user.email, data?.role ?? null, adminEmails));
         setChecking(false);
-      })
-      .catch(() => {
+      }, () => {
         setAuthorized(false);
         setChecking(false);
       });

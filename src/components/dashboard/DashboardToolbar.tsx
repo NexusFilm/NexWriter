@@ -26,8 +26,10 @@ export function DashboardToolbar({ onNewScript, creating }: DashboardToolbarProp
     if (!hasSupabase) { setShowAdmin(false); return; }
     supabase
       .from('sw_user_profiles').select('role').eq('id', user.id).maybeSingle()
-      .then(({ data }) => setShowAdmin(isAdmin(user.email, data?.role ?? null, adminEmails)))
-      .catch(() => setShowAdmin(false));
+      .then(
+        ({ data }) => setShowAdmin(isAdmin(user.email, data?.role ?? null, adminEmails)),
+        () => setShowAdmin(false),
+      );
   }, [user]);
 
   // Close menu when clicking outside
