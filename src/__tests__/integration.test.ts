@@ -284,14 +284,15 @@ describe('Integration: AutosaveManager cloud sync flow', () => {
     expect(resolved[0].text).toBe('cloud');
   });
 
-  it('skips cloud sync for free tier', async () => {
+  it('syncs to cloud for free tier too', async () => {
     tier = 'free';
     manager.start('script-1');
-    manager.onContentChange([makeElement()]);
+    const elements = [makeElement()];
+    manager.onContentChange(elements);
     vi.advanceTimersByTime(1500);
 
     await vi.advanceTimersByTimeAsync(45_000);
-    expect(mockRepo.updateScript).not.toHaveBeenCalled();
+    expect(mockRepo.updateScript).toHaveBeenCalledWith('script-1', { elements });
   });
 });
 

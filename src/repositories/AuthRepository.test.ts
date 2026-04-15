@@ -100,14 +100,20 @@ describe('AuthRepository', () => {
       mockSignInWithOAuth.mockResolvedValue({ error: null });
 
       await repo.signInWithProvider('google');
-      expect(mockSignInWithOAuth).toHaveBeenCalledWith({ provider: 'google' });
+      expect(mockSignInWithOAuth).toHaveBeenCalledWith({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/` },
+      });
     });
 
     it('calls signInWithOAuth for github', async () => {
       mockSignInWithOAuth.mockResolvedValue({ error: null });
 
       await repo.signInWithProvider('github');
-      expect(mockSignInWithOAuth).toHaveBeenCalledWith({ provider: 'github' });
+      expect(mockSignInWithOAuth).toHaveBeenCalledWith({
+        provider: 'github',
+        options: { redirectTo: `${window.location.origin}/` },
+      });
     });
 
     it('throws AppError with AUTH_PROVIDER_ERROR on failure', async () => {

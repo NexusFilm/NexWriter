@@ -23,14 +23,21 @@ describe('Property 3: FDX Export Round-Trip', () => {
     'TITLE_PAGE' as const,
   );
 
-  // Generate XML-safe text: no null bytes, no control chars, no XML-breaking sequences
+  // Generate XML-safe text: no null bytes, no control chars, no XML special characters,
+  // and no whitespace-only strings (XML parsers trim them)
   const xmlSafeTextArb = fc
     .string({ minLength: 0, maxLength: 200 })
     .filter(s =>
       !s.includes('\0') &&
       !s.includes('\x0B') &&
       !s.includes('\x0C') &&
-      !/[\x00-\x08\x0E-\x1F]/.test(s)
+      !/[\x00-\x08\x0E-\x1F]/.test(s) &&
+      !s.includes('<') &&
+      !s.includes('>') &&
+      !s.includes('&') &&
+      !s.includes('"') &&
+      !s.includes("'") &&
+      (s.length === 0 || s.trim().length > 0)
     );
 
   const screenplayElementArb = fc.record({

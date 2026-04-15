@@ -76,6 +76,7 @@ function createQueryMock() {
   chain.order = vi.fn().mockReturnValue(self());
   chain.limit = vi.fn().mockReturnValue(self());
   chain.single = vi.fn().mockResolvedValue({ data: null, error: null });
+  chain.maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
 
   (self() as any).then = (resolve: Function) =>
     chain.single().then((result: any) => resolve(result));
@@ -98,6 +99,7 @@ vi.mock('@/lib/supabase', () => ({
         order: (...args: unknown[]) => { queryMock.order(...args); return self(); },
         limit: (...args: unknown[]) => { queryMock.limit(...args); return self(); },
         single: () => queryMock.single(),
+        maybeSingle: () => queryMock.maybeSingle(),
         then: (resolve: Function) => queryMock.single().then((r: any) => resolve(r)),
       };
     }),
@@ -117,39 +119,31 @@ describe('TierGateService', () => {
 
   describe('getScriptCount', () => {
     it('returns script_count from user profile when available', async () => {
-      queryMock.single.mockResolvedValue({ data: { script_count: 5 }, error: null });
+      queryMock.maybeSingle.mockResolvedValue({ data: { script_count: 5 }, error: null });
 
       const count = await service.getScriptCount('user-1');
       expect(count).toBe(5);
     });
 
     it('falls back to counting sw_scripts when profile query fails', async () => {
-      // First call (profile) fails, second call (count) succeeds
-      queryMock.single
-        .mockResolvedValueOnce({ data: null, error: { message: 'Not found' } })
-        .mockResolvedValueOnce({ data: null, error: null, count: 7 });
-
-      // The fallback uses a different query pattern with count: 'exact', head: true
-      // We need the chain to return count on the awaited result
-      // Override the then to return count
-      const origSingle = queryMock.single;
-      let callCount = 0;
-      queryMock.single = vi.fn().mockImplementation(() => {
-        callCount++;
-        if (callCount === 1) {
-          return Promise.resolve({ data: null, error: { message: 'Not found' } });
-        }
-        return Promise.resolve({ data: null, error: null, count: 7 });
+      // First call (profile via maybeSingle) fails, second call (count via then/single) succeeds
+      let maybeSingleCallCount = 0;
+      queryMock.maybeSingle = vi.fn().mockImplementation(() => {
+        maybeSingleCallCount++;
+        return Promise.resolve({ data: null, error: { message: 'Not found' } });
       });
+
+      // The fallback uses select('*', { count: 'exact', head: true }).eq(...)
+      // which resolves via the chain's then → single
+      queryMock.single.mockResolvedValue({ data: null, error: null, count: 7 });
 
       const count = await service.getScriptCount('user-1');
       expect(count).toBe(7);
     });
 
     it('throws AppError when both queries fail', async () => {
-      queryMock.single
-        .mockResolvedValueOnce({ data: null, error: { message: 'Profile error' } })
-        .mockResolvedValueOnce({ data: null, error: { message: 'Count error' }, count: null });
+      queryMock.maybeSingle.mockResolvedValue({ data: null, error: { message: 'Profile error' } });
+      queryMock.single.mockResolvedValue({ data: null, error: { message: 'Count error' }, count: null });
 
       await expect(service.getScriptCount('user-1')).rejects.toThrow(AppError);
     });
@@ -157,22 +151,22 @@ describe('TierGateService', () => {
 
   describe('canCreateScript', () => {
     it('returns true for writer tier', async () => {
-      // getUserTier returns 'writer'
-      queryMock.single.mockResolvedValue({ data: { tier: 'writer' }, error: null });
+      // getUserTier returns 'writer' via maybeSingle
+      queryMock.maybeSingle.mockResolvedValue({ data: { tier: 'writer' }, error: null });
 
       const result = await service.canCreateScript('user-1');
       expect(result).toBe(true);
     });
 
     it('returns true for pro tier', async () => {
-      queryMock.single.mockResolvedValue({ data: { tier: 'pro' }, error: null });
+      queryMock.maybeSingle.mockResolvedValue({ data: { tier: 'pro' }, error: null });
 
       const result = await service.canCreateScript('user-1');
       expect(result).toBe(true);
     });
 
     it('returns true for free tier with fewer than 3 scripts', async () => {
-      queryMock.single
+      queryMock.maybeSingle
         .mockResolvedValueOnce({ data: { tier: 'free' }, error: null }) // getUserTier
         .mockResolvedValueOnce({ data: { script_count: 2 }, error: null }); // getScriptCount
 
@@ -181,7 +175,7 @@ describe('TierGateService', () => {
     });
 
     it('returns false for free tier with 3 or more scripts', async () => {
-      queryMock.single
+      queryMock.maybeSingle
         .mockResolvedValueOnce({ data: { tier: 'free' }, error: null })
         .mockResolvedValueOnce({ data: { script_count: 3 }, error: null });
 
@@ -189,30 +183,34 @@ describe('TierGateService', () => {
       expect(result).toBe(false);
     });
 
-    it('throws AppError when tier lookup fails', async () => {
-      queryMock.single.mockResolvedValue({ data: null, error: { message: 'DB error' } });
+    it('defaults to free tier when tier lookup fails and checks script count', async () => {
+      // getUserTier returns 'free' on error, then getScriptCount is called
+      queryMock.maybeSingle
+        .mockResolvedValueOnce({ data: null, error: { message: 'DB error' } }) // getUserTier
+        .mockResolvedValueOnce({ data: { script_count: 1 }, error: null }); // getScriptCount
 
-      await expect(service.canCreateScript('user-1')).rejects.toThrow(AppError);
+      const result = await service.canCreateScript('user-1');
+      expect(result).toBe(true);
     });
   });
 
   describe('canAccessFeature', () => {
     it('returns false for free tier on paid features', async () => {
-      queryMock.single.mockResolvedValue({ data: { tier: 'free' }, error: null });
+      queryMock.maybeSingle.mockResolvedValue({ data: { tier: 'free' }, error: null });
 
       const result = await service.canAccessFeature('user-1', 'fdx_export');
       expect(result).toBe(false);
     });
 
     it('returns true for writer tier on paid features', async () => {
-      queryMock.single.mockResolvedValue({ data: { tier: 'writer' }, error: null });
+      queryMock.maybeSingle.mockResolvedValue({ data: { tier: 'writer' }, error: null });
 
       const result = await service.canAccessFeature('user-1', 'fdx_export');
       expect(result).toBe(true);
     });
 
     it('returns true for pro tier on paid features', async () => {
-      queryMock.single.mockResolvedValue({ data: { tier: 'pro' }, error: null });
+      queryMock.maybeSingle.mockResolvedValue({ data: { tier: 'pro' }, error: null });
 
       const result = await service.canAccessFeature('user-1', 'cloud_sync');
       expect(result).toBe(true);

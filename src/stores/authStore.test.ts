@@ -19,11 +19,14 @@ const {
   mockSelect,
   mockEq,
   mockSingle,
+  mockMaybeSingle,
 } = vi.hoisted(() => {
+  const mockMaybeSingle = vi.fn();
   const mockSingle = vi.fn();
-  const mockEq = vi.fn(() => ({ single: mockSingle }));
+  const mockUpsert = vi.fn().mockResolvedValue({ data: null, error: null });
+  const mockEq = vi.fn(() => ({ single: mockSingle, maybeSingle: mockMaybeSingle }));
   const mockSelect = vi.fn(() => ({ eq: mockEq }));
-  const mockFrom = vi.fn(() => ({ select: mockSelect }));
+  const mockFrom = vi.fn(() => ({ select: mockSelect, upsert: mockUpsert }));
   return {
     mockSignIn: vi.fn(),
     mockSignUp: vi.fn(),
@@ -33,6 +36,7 @@ const {
     mockSelect,
     mockEq,
     mockSingle,
+    mockMaybeSingle,
   };
 });
 
@@ -48,8 +52,12 @@ vi.mock('@/repositories/AuthRepository', () => ({
 vi.mock('@/lib/supabase', () => ({
   supabase: {
     from: (...args: unknown[]) => mockFrom(...args),
-    auth: {},
+    auth: {
+      getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
+      onAuthStateChange: vi.fn().mockReturnValue({ data: { subscription: { unsubscribe: vi.fn() } } }),
+    },
   },
+  hasSupabase: false,
 }));
 
 import { useAuthStore } from './authStore';
@@ -58,7 +66,7 @@ describe('AuthStore', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     useAuthStore.setState({ user: null, tier: 'free', loading: true });
-    mockSingle.mockResolvedValue({ data: { tier: 'free' }, error: null });
+    mockMaybeSingle.mockResolvedValue({ data: { tier: 'free' }, error: null });
   });
 
   describe('initial state', () => {
@@ -73,7 +81,7 @@ describe('AuthStore', () => {
   describe('signIn', () => {
     it('sets user and calls refreshTier on success', async () => {
       mockSignIn.mockResolvedValue(fakeUser);
-      mockSingle.mockResolvedValue({ data: { tier: 'writer' }, error: null });
+      mockMaybeSingle.mockResolvedValue({ data: { tier: 'writer' }, error: null });
 
       await useAuthStore.getState().signIn('test@example.com', 'password123');
 
@@ -147,7 +155,7 @@ describe('AuthStore', () => {
   describe('refreshTier', () => {
     it('fetches tier from sw_user_profiles for current user', async () => {
       useAuthStore.setState({ user: fakeUser as any, tier: 'free', loading: false });
-      mockSingle.mockResolvedValue({ data: { tier: 'pro' }, error: null });
+      mockMaybeSingle.mockResolvedValue({ data: { tier: 'pro' }, error: null });
 
       await useAuthStore.getState().refreshTier();
 
@@ -166,13 +174,13 @@ describe('AuthStore', () => {
       expect(useAuthStore.getState().tier).toBe('free');
     });
 
-    it('keeps current tier on error', async () => {
+    it('defaults to free tier on error', async () => {
       useAuthStore.setState({ user: fakeUser as any, tier: 'writer', loading: false });
-      mockSingle.mockResolvedValue({ data: null, error: { message: 'Not found' } });
+      mockMaybeSingle.mockResolvedValue({ data: null, error: { message: 'Not found' } });
 
       await useAuthStore.getState().refreshTier();
 
-      expect(useAuthStore.getState().tier).toBe('writer');
+      expect(useAuthStore.getState().tier).toBe('free');
     });
   });
 });

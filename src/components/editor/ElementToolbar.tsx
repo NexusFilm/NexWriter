@@ -53,15 +53,19 @@ interface ElementButton {
   type: ElementType;
   icon: React.ReactNode;
   label: string;
+  shortcutNum: string;
 }
 
+const isMac = typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+const modKey = isMac ? '⌘' : 'Ctrl+';
+
 const ELEMENT_BUTTONS: ElementButton[] = [
-  { type: 'SCENE_HEADING', icon: <SceneIcon />, label: 'Scene' },
-  { type: 'ACTION', icon: <ActionIcon />, label: 'Action' },
-  { type: 'CHARACTER', icon: <CharacterIcon />, label: 'Char' },
-  { type: 'DIALOGUE', icon: <DialogueIcon />, label: 'Dialog' },
-  { type: 'PARENTHETICAL', icon: <ParenIcon />, label: 'Paren' },
-  { type: 'TRANSITION', icon: <TransitionIcon />, label: 'Trans' },
+  { type: 'SCENE_HEADING', icon: <SceneIcon />, label: 'Scene', shortcutNum: '1' },
+  { type: 'ACTION', icon: <ActionIcon />, label: 'Action', shortcutNum: '2' },
+  { type: 'CHARACTER', icon: <CharacterIcon />, label: 'Char', shortcutNum: '3' },
+  { type: 'DIALOGUE', icon: <DialogueIcon />, label: 'Dialog', shortcutNum: '4' },
+  { type: 'PARENTHETICAL', icon: <ParenIcon />, label: 'Paren', shortcutNum: '5' },
+  { type: 'TRANSITION', icon: <TransitionIcon />, label: 'Trans', shortcutNum: '6' },
 ];
 
 export function ElementToolbar({ activeElementType, onElementTypeClick }: ElementToolbarProps) {
@@ -78,6 +82,7 @@ export function ElementToolbar({ activeElementType, onElementTypeClick }: Elemen
         >
           <span className={styles.icon}>{btn.icon}</span>
           <span className={styles.label}>{btn.label}</span>
+          <span className={styles.shortcut}>{modKey}{btn.shortcutNum}</span>
         </button>
       ))}
       <div className={styles.divider} />

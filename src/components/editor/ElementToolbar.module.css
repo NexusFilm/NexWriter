@@ -62,6 +62,16 @@
   white-space: nowrap;
 }
 
+.shortcut {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  opacity: 0.55;
+  line-height: 1;
+  white-space: nowrap;
+}
+
 .divider {
   width: 32px;
   height: 1px;
@@ -103,6 +113,10 @@
     display: none;
   }
 
+  .shortcut {
+    display: none;
+  }
+
   .icon {
     font-size: 20px;
   }
@@ -127,6 +141,10 @@
   }
 
   .label {
+    display: none;
+  }
+
+  .shortcut {
     display: none;
   }
 

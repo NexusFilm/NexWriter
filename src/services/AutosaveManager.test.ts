@@ -186,15 +186,16 @@ describe('AutosaveManager', () => {
       expect(repo.updateScript).toHaveBeenCalledWith('script-1', { elements });
     });
 
-    it('skips cloud sync for free tier', async () => {
+    it('syncs to cloud for free tier too', async () => {
       tier = 'free';
       manager.start('script-1');
-      manager.onContentChange([makeElement()]);
+      const elements = [makeElement()];
+      manager.onContentChange(elements);
       vi.advanceTimersByTime(1500);
 
       await vi.advanceTimersByTimeAsync(45_000);
 
-      expect(repo.updateScript).not.toHaveBeenCalled();
+      expect(repo.updateScript).toHaveBeenCalledWith('script-1', { elements });
     });
 
     it('retries with exponential backoff on failure then calls onOffline', async () => {
